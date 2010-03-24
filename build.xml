@@ -9,7 +9,7 @@
 	<property name="builtRes" location="${build}/res" />
 	<property name="bat" location="bat" />
 	<property name="software" location="software" />
-	<property name="GoogleEarthExe" location="C:\Program Files\Google\Google Earth\googleearth.exe" />
+	<property name="GoogleEarthExe" location="C:\Program Files\Google\Google Earth\client\googleearth.exe" />
 	<property name="builtCom4j" location="${build}/com4j" />
 	<property name="srcCom4j" location="${src}/com4j" />
 	<property name="winJava" location="C:\Windows\java" />
