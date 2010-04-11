@@ -6,15 +6,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URI;
+import java.net.UnknownHostException;
 
 import bzb.se.Paths;
 
 import javazoom.jl.player.Player;
 
-public class CommObjectSecondary implements Runnable {
+public class SecondaryScreen implements Runnable {
 
 	private ServerSocket ss;
 
@@ -60,19 +62,27 @@ public class CommObjectSecondary implements Runnable {
 					"3-11.html", "3-12.html" } };
 
 	private String currentContent = "";
+	
+	public SecondaryScreen () {
+		this(Screens.PORT_SECONDARY);
+	}
 
-	public CommObjectSecondary() {
+	public SecondaryScreen(final int port) {
 		try {
-			ss = new ServerSocket(IP.SECONDARY_PORT);
+			ss = new ServerSocket(port);
 			audio = new AudioPlayer();
 
 			new Thread(new Runnable() {
 				public void run() {
 					explorer = Desktop.getDesktop();
 					resetContent();
-					System.out
-							.println("Started secondary Google Earth installation display on "
-									+ IP.SECONDARY_IP + ":" + IP.SECONDARY_PORT);
+					try {
+						System.out
+								.println("Started secondary Google Earth installation display on "
+										+ InetAddress.getLocalHost().getHostAddress() + ":" + port);
+					} catch (UnknownHostException e) {
+						e.printStackTrace();
+					}
 				}
 			}).start();
 		} catch (IOException e) {

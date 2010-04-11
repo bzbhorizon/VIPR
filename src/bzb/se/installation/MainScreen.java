@@ -6,8 +6,11 @@ import java.io.OutputStream;
 import java.io.FileReader;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.net.URI;
@@ -18,7 +21,7 @@ import com4j.ClassFactory;
 import com4j.IApplicationGE;
 import com4j.AltitudeModeGE;
 
-public class CommObject implements Runnable {
+public class MainScreen implements Runnable {
 
 	private ServerSocket ss;
 	
@@ -37,16 +40,20 @@ public class CommObject implements Runnable {
 	private String currentContent = "";
 	private String currentControl = "";
 	
-	public CommObject () {
+	public MainScreen () {
+		this(Screens.PORT_MAIN);
+	}
+	
+	public MainScreen (final int port) {
 		try {
-			ss = new ServerSocket(IP.MAIN_PORT);
+			ss = new ServerSocket(port);
 
 			new Thread(new Runnable() {
 				public void run () {
 					ge = ClassFactory.createApplicationGE();
 					ge.openKmlFile(Paths.ICONS_OVERLAY_URL, 0);
 					resetGoogleEarth();
-					System.out.println("Started main Google Earth installation display on " + IP.MAIN_IP + ":" + IP.MAIN_PORT);
+					System.out.println("Started main Google Earth installation display on " + InetAddress.getLocalHost().getHostAddress() + ":" + port);
 				}
 			}).start();
 
@@ -55,20 +62,29 @@ public class CommObject implements Runnable {
 		}
 	}
 	
-	OutputStream dos;
-	Socket so;
+	ArrayList<OutputStream> dos = new ArrayList<OutputStream>();
+	ArrayList<Socket> so = new ArrayList<Socket>();
 
 	public void run() {
 		new Thread(
 			new Runnable() {
 				public void run() {
-					try {
-						so = new Socket(IP.SECONDARY_IP, IP.SECONDARY_PORT);
-						dos = so.getOutputStream();
-						System.out.println("Connected to secondary Google Earth installation display on "+ IP.SECONDARY_IP + ":" + IP.SECONDARY_PORT);
-					} catch (IOException e) {
-						//e.printStackTrace();
-						System.out.println("Couldn't connect to secondary display on " + IP.SECONDARY_IP + ":" + IP.SECONDARY_PORT);
+					ArrayList secondaryScreens = Screens.getSecondaryScreens();
+					Iterator i = secondaryScreens.iterator();
+					while (i.hasNext()) {
+						String ip;
+						int port;
+						try {
+							ArrayList thisScreen = (ArrayList) i.next();
+							ip = (String)thisScreen.get(0);
+							port = Integer.parseInt((String)thisScreen.get(1));
+							so.add(new Socket(ip, port));
+							dos.add(so.get(so.size() - 1).getOutputStream());
+							System.out.println("Connected to secondary Google Earth installation display on "+ ip + ":" + port);
+						} catch (IOException e) {
+							//e.printStackTrace();
+							System.out.println("Couldn't connect to secondary display on " + ip + ":" + port);
+						}
 					}
 				}
 			}
@@ -106,12 +122,16 @@ public class CommObject implements Runnable {
 			}
 		}
 		try {
-			if (dos != null) {
-				dos.close();
+			for (int i = 0; i < dos.size(); i++) {
+				if (dos.get(i) != null) {
+					dos.get(i).close();
+				}
 			}
-			if (so != null) {
-				so.close();
-			}				
+			for (int i = 0; i < so.size(); i++) {
+				if (so.get(i) != null) {
+					so.get(i).close();
+				}
+			}
 			if (ss != null) {
 				ss.close();
 			}
@@ -134,20 +154,24 @@ public class CommObject implements Runnable {
 			}
 			try {
 				String message = "z" + alt;
-				dos.write(message.length());
-				dos.flush();
-				dos.write(message.getBytes());
-				dos.flush();
+				for (int i = 0; i < dos.size(); i++) {
+					dos.get(i).write(message.length());
+					dos.get(i).flush();
+					dos.get(i).write(message.getBytes());
+					dos.get(i).flush();
+				}
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			}
 		} else if (command.startsWith("c")) {
 			try {
 				String message = "c" + gx + "," + gy + "," + alt;
-				dos.write(message.length());
-				dos.flush();
-				dos.write(message.getBytes());
-				dos.flush();
+				for (int i = 0; i < dos.size(); i++) {
+					dos.get(i).write(message.length());
+					dos.get(i).flush();
+					dos.get(i).write(message.getBytes());
+					dos.get(i).flush();
+				}
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			}
@@ -155,10 +179,12 @@ public class CommObject implements Runnable {
 			resetGoogleEarth();
 			try {
 				String message = "e";
-				dos.write(message.length());
-				dos.flush();
-				dos.write(message.getBytes());
-				dos.flush();
+				for (int i = 0; i < dos.size(); i++) {
+					dos.get(i).write(message.length());
+					dos.get(i).flush();
+					dos.get(i).write(message.getBytes());
+					dos.get(i).flush();
+				}
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			}

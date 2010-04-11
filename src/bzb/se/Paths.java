@@ -20,4 +20,6 @@ public final class Paths {
 	
 	public static final String ICONS_OVERLAY_URL = RES_DIR + "icons.kml";
 	
+	public static final String INSTALLATION_CONFIG_URL = RES_DIR + "installation.xml";
+	
 }
