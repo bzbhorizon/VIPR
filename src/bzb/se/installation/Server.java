@@ -1,4 +1,4 @@
-package bzb.se.GoogleEarth;
+package bzb.se.installation;
 
 
 public class Server {

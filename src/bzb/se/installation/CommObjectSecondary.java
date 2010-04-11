@@ -1,4 +1,4 @@
-package bzb.se.GoogleEarth;
+package bzb.se.installation;
 
 import java.awt.Desktop;
 import java.io.IOException;

@@ -1,6 +1,6 @@
 <project name="GoogleEarth_Server" default="compile" basedir=".">
 
-	<description>Test</description>
+	<description>VIPR</description>
 	<property name="src" location="src" />
 	<property name="build" location="../build" />
 	<property name="lib" location="lib" />

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/com4j.jar"/>
+	<classpathentry kind="lib" path="lib/jl1.0.1.jar"/>
+	<classpathentry kind="lib" path="software/args4j-2.0.1.jar"/>
+	<classpathentry kind="lib" path="software/com4j.jar"/>
+	<classpathentry kind="lib" path="software/tlbimp.jar"/>
+	<classpathentry kind="lib" path="lib/jimi.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.7-bin.jar"/>
+	<classpathentry kind="lib" path="lib/swt-linux.jar"/>
+	<classpathentry kind="lib" path="lib/swt-windows.jar"/>
+	<classpathentry kind="lib" path="lib/swt.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
