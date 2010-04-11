@@ -2,14 +2,14 @@
 
 	<description>VIPR</description>
 	<property name="src" location="src" />
-	<property name="build" location="../build" />
+	<property name="build" location="../VIPR_build" />
 	<property name="lib" location="lib" />
 	<property name="builtLib" location="${build}/lib" />
 	<property name="res" location="res" />
 	<property name="builtRes" location="${build}/res" />
 	<property name="bat" location="bat" />
 	<property name="software" location="software" />
-	<property name="GoogleEarthExe" location="C:\Program Files\Google\Google Earth\client\googleearth.exe" />
+	<property name="GoogleEarthExe" location="C:\Program Files\Google\Google Earth\googleearth.exe" />
 	<property name="builtCom4j" location="${build}/com4j" />
 	<property name="srcCom4j" location="${src}/com4j" />
 	<property name="winJava" location="C:\Windows\java" />
@@ -27,7 +27,7 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
-		<copy todir="..">
+		<copy todir="${build}">
 			<fileset dir="${bat}" />
 			<fileset dir="${lib}">
 				<include name="*.dll" />
@@ -60,11 +60,6 @@
 
 	<target name="clean" description="clean up">
 		<delete dir="${build}" />
-		<delete>
-			<fileset dir=".." includes="*.bat" />
-			<fileset dir=".." includes="*.sql" />
-		</delete>
-
 	</target>
 
 </project>

@@ -159,7 +159,7 @@ public class DumpData {
 	public static void writeToFile (String xml) {
 		try {
 			System.out.println("Writing data to file");
-			BufferedWriter out = new BufferedWriter(new FileWriter("markers.xml"));
+			BufferedWriter out = new BufferedWriter(new FileWriter("res/markers.xml"));
 			out.write(xml);
 			out.close();
 			System.out.println("Written");
