@@ -1,2 +1,2 @@
-java -cp .;lib/* bzb.se.GoogleEarth.Server 2
+java -cp .;lib/* bzb.se.installation.Server 2
 pause

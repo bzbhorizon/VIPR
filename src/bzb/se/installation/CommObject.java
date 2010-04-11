@@ -12,6 +12,8 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.net.URI;
 
+import bzb.se.Paths;
+
 import com4j.ClassFactory;
 import com4j.IApplicationGE;
 import com4j.AltitudeModeGE;
@@ -72,7 +74,7 @@ public class CommObject implements Runnable {
 		if(!kmlFile.equals(currentContent)) {
 			currentContent = kmlFile;
 			try {
-				File content = new File("C:/rivers/build/res/content.kml");
+				File content = new File(Paths.CONTENT_FILE_URL);
 				File newContent = new File(kmlFile);
 
 				FileReader fr = new FileReader(newContent);
@@ -86,32 +88,7 @@ public class CommObject implements Runnable {
 				fr.close();
 				fw.close();
 		
-				ge.openKmlFile("C:/rivers/build/res/content.kml", 0);
-			} catch (IOException e) {
-				System.out.println("burp");
-			}
-		}
-	}
-
-	private void switchControlKML(String kmlFile) {
-		if(!kmlFile.equals(currentControl)) {
-			currentControl = kmlFile;
-			try {
-				File content = new File("C:/rivers/build/res/control.kml");
-				File newContent = new File(kmlFile);
-
-				FileReader fr = new FileReader(newContent);
-				FileWriter fw = new FileWriter(content);
-
-				int c = 0;
-				while ((c = fr.read()) != -1) {
-					fw.write(c);
-				}
-	
-				fr.close();
-				fw.close();
-		
-				ge.openKmlFile("C:/rivers/build/res/control.kml", 0);
+				ge.openKmlFile(Paths.CONTENT_FILE_URL, 0);
 			} catch (IOException e) {
 				System.out.println("burp");
 			}
@@ -232,11 +209,7 @@ public class CommObject implements Runnable {
 				rotateRight();
 			}
 		} else if (command.startsWith("h")) {
-			if (command.equals("h0")) {
-				switchControlKML("C:/rivers/build/res/tilt.kml");
-			} else if (command.equals("h1")) {
-				switchControlKML("C:/rivers/build/res/holding.kml");
-			}
+		
 		} else if (System.currentTimeMillis() - lastUpdated > 1) {
 			try {
 				i = command.indexOf('.');
@@ -385,7 +358,6 @@ public class CommObject implements Runnable {
 	
 	public void resetGoogleEarth () {
 		switchContentKML("C:/rivers/build/res/icons.kml");
-		switchControlKML("C:/rivers/build/res/holding.kml");
 		ge.openKmlFile("C:/rivers/build/res/videos.kml", 0);
 		gy = gyStart;
 		gx = gxStart;
