@@ -5,6 +5,8 @@ import java.sql.*;
 import java.util.*;
 import java.net.URL;
 
+import bzb.se.Paths;
+
 
 /*
  *	Gets data from Darryn's MySQL database and dumps it to a local XML file
@@ -30,9 +32,16 @@ public class DumpData {
         ResultSet rs = null;
 
         try {
-            String dbURL = "jdbc:mysql://mysql.mitussis.net:3306/mitussis_earth";
-            String username = "bedwell";
-            String password = "growlingflythrough";
+        	File file = new File(Paths.DB_LOGIN_FILE_URL);
+        	DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+        	String[] bits = dis.readLine().split(";");
+        	dis.close();
+        	
+            String dbURL = "jdbc:mysql://" + bits[0];
+            String username = bits[1];
+            String password = bits[2];
+            
+            bits = null;
 
             Class.forName("com.mysql.jdbc.Driver");
 
@@ -117,7 +126,13 @@ public class DumpData {
             System.out.println("SQLException: " + ex.getMessage()); 
             System.out.println("SQLState: " + ex.getSQLState()); 
             System.out.println("VendorError: " + ex.getErrorCode()); 
-        } finally {
+        } catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
             if (rs != null) {
                 try {
                     rs.close();
@@ -159,7 +174,7 @@ public class DumpData {
 	public static void writeToFile (String xml) {
 		try {
 			System.out.println("Writing data to file");
-			BufferedWriter out = new BufferedWriter(new FileWriter("res/markers.xml"));
+			BufferedWriter out = new BufferedWriter(new FileWriter(Paths.DB_XML_FILE_URL));
 			out.write(xml);
 			out.close();
 			System.out.println("Written");
