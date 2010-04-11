@@ -1,0 +1,35 @@
+html, body {
+	height: 100%;
+	background-color: black;
+}
+
+#centeredcontent {
+	text-align: center;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: -440px;
+	margin-top: -325px;
+}
+
+#centeredvideo480 {
+	text-align: center;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: -360px;
+	margin-top: -240px;
+}
+
+#centeredvideo576 {
+	text-align: center;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: -360px;
+	margin-top: -288px;
+}
+
+img {
+	height: 650px;
+}

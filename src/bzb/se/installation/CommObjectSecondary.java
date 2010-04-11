@@ -136,8 +136,8 @@ public class CommObjectSecondary implements Runnable {
 						distance = temp;
 					}
 				}
-				if (Config.restrictWander
-						&& distance < Config.wanderLimit[alt] / 6) {
+				if (Config.WANDER_RESTRICT
+						&& distance < Config.WANDER_LIMIT[alt] / 6) {
 					try {
 						explorer
 								.browse(new URI(new File(Paths.RES_DIR
@@ -172,7 +172,8 @@ public class CommObjectSecondary implements Runnable {
 			alt = 0;
 			audio.reset();
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("There should be an index page for the browser at " + new File(Paths.CONTENT_INDEX_URL).toURI()
+					.toString());
 		}
 	}
 

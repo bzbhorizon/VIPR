@@ -25,28 +25,12 @@ public class CommObject implements Runnable {
 	public boolean run;
 	
 	private IApplicationGE ge;
-	
-	private final double gyStart = 33.314729;
-	private final double gxStart = 44.422256;
-	private final double angStart = 1;
-	
-	private final double baseSpeed = 0.0025;
-	private final int vangLevel[] = new int[] {0,15,55};
-	private final double speedMod[] = new double[] {0.3,0.5,2.2};
 
-	private double gy = gyStart; //180 -> -180
-	private double gx = gxStart; //90 -> -90
+	private double gy = Config.START_GY; //180 -> -180
+	private double gx = Config.START_GX; //90 -> -90
 	private int alt = 0;
-	private double ang = angStart;
-	private double vang = vangLevel[0];
-
-	private final double INSTANT = 5;
-	private final double SLOW = 0.75;
-	
-	private final double yTop[] = new double[] {gyStart + Config.wanderLimit[0], gyStart + Config.wanderLimit[1], gyStart + Config.wanderLimit[2]};
-	private final double yBottom[] = new double[] {gyStart - Config.wanderLimit[0], gyStart - Config.wanderLimit[1], gyStart - Config.wanderLimit[2]};
-	private final double xLeft[] = new double[] {gxStart - Config.wanderLimit[0], gxStart - Config.wanderLimit[1], gxStart - Config.wanderLimit[2]};
-	private final double xRight[] = new double[] {gxStart + Config.wanderLimit[0], gxStart + Config.wanderLimit[1], gxStart + Config.wanderLimit[2]};
+	private double ang = Config.START_ANGLE;
+	private double vang = Config.HORIZON_ANGLE[0];
 
 	private long lastUpdate = 0;
 
@@ -60,6 +44,7 @@ public class CommObject implements Runnable {
 			new Thread(new Runnable() {
 				public void run () {
 					ge = ClassFactory.createApplicationGE();
+					ge.openKmlFile(Paths.ICONS_OVERLAY_URL, 0);
 					resetGoogleEarth();
 					System.out.println("Started main Google Earth installation display on " + IP.MAIN_IP + ":" + IP.MAIN_PORT);
 				}
@@ -67,31 +52,6 @@ public class CommObject implements Runnable {
 
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-
-	private void switchContentKML(String kmlFile) {
-		if(!kmlFile.equals(currentContent)) {
-			currentContent = kmlFile;
-			try {
-				File content = new File(Paths.CONTENT_FILE_URL);
-				File newContent = new File(kmlFile);
-
-				FileReader fr = new FileReader(newContent);
-				FileWriter fw = new FileWriter(content);
-
-				int c = 0;
-				while ((c = fr.read()) != -1) {
-					fw.write(c);
-				}
-
-				fr.close();
-				fw.close();
-		
-				ge.openKmlFile(Paths.CONTENT_FILE_URL, 0);
-			} catch (IOException e) {
-				System.out.println("burp");
-			}
 		}
 	}
 	
@@ -216,7 +176,7 @@ public class CommObject implements Runnable {
 				accelData[0] = Double.parseDouble(command.substring(0, i));
 				accelData[1] = Double.parseDouble(command.substring(i + 1, command.length()));
 				updatePosition();
-				updateGoogleEarth(INSTANT);
+				updateGoogleEarth(Config.PAN_INSTANT);
 				lastUpdated = System.currentTimeMillis();
 			} catch (Exception e) {
 				System.out.println("burp");
@@ -282,10 +242,10 @@ public class CommObject implements Runnable {
 
 		if (!(dx < 0.15 && dx > -0.15) ||
 				!(dy < 0.15 && dy > -0.15)) {
-			dx = delay * baseSpeed * Config.altLevel[alt]/Config.altLevel[0] * dx * speedMod[alt];
-			dy = delay * baseSpeed * Config.altLevel[alt]/Config.altLevel[0] * dy * speedMod[alt];
+			dx = delay * Config.SPEED_BASE * Config.ALT_LEVEL[alt]/Config.ALT_LEVEL[0] * dx * Config.SPEED_MODIFIER[alt];
+			dy = delay * Config.SPEED_BASE * Config.ALT_LEVEL[alt]/Config.ALT_LEVEL[0] * dy * Config.SPEED_MODIFIER[alt];
 			
-			if ((gx + dx) > xLeft[alt] && (gx + dx) < xRight[alt] && (gy + dy) < yTop[alt] && (gy + dy) > yBottom[alt]) {
+			if ((gx + dx) > Config.BOUNDARY_LEFT[alt] && (gx + dx) < Config.BOUNDARY_RIGHT[alt] && (gy + dy) < Config.BOUNDARY_TOP[alt] && (gy + dy) > Config.BOUNDARY_BOTTOM[alt]) {
 				gx += dx;
 				if (gx > 180) {
 					gx -= 360;
@@ -311,33 +271,33 @@ public class CommObject implements Runnable {
 	
 	public void rotateLeft () {
 		ang += 90;
-		updateGoogleEarth(SLOW);
+		updateGoogleEarth(Config.PAN_SLOW);
 	}
 
 	public void rotateRight () {
 		ang -= 90;
-		updateGoogleEarth(SLOW);
+		updateGoogleEarth(Config.PAN_SLOW);
 	}
 
 	public void zoomIn () {
-		if (alt < Config.altLevel.length - 1) {
+		if (alt < Config.ALT_LEVEL.length - 1) {
 			alt++;
-			if (!(gx > xLeft[alt] && gx < xRight[alt] && gy < yTop[alt] && gy > yBottom[alt])) {
-				gy = gyStart;
-				gx = gxStart;
+			if (!(gx > Config.BOUNDARY_LEFT[alt] && gx < Config.BOUNDARY_RIGHT[alt] && gy < Config.BOUNDARY_TOP[alt] && gy > Config.BOUNDARY_BOTTOM[alt])) {
+				gy = Config.START_GY;
+				gx = Config.START_GX;
 			}
-			updateGoogleEarth(SLOW);
+			updateGoogleEarth(Config.PAN_SLOW);
 		}
 	}
 	
 	public void zoomOut () {
 		if (alt > 0) {
 			alt--;
-			if (!(gx > xLeft[alt] && gx < xRight[alt] && gy < yTop[alt] && gy > yBottom[alt])) {
-				gy = gyStart;
-				gx = gxStart;
+			if (!(gx > Config.BOUNDARY_LEFT[alt] && gx < Config.BOUNDARY_RIGHT[alt] && gy < Config.BOUNDARY_TOP[alt] && gy > Config.BOUNDARY_BOTTOM[alt])) {
+				gy = Config.START_GY;
+				gx = Config.START_GX;
 			}
-			updateGoogleEarth(SLOW);
+			updateGoogleEarth(Config.PAN_SLOW);
 		}
 	}
 	
@@ -349,7 +309,7 @@ public class CommObject implements Runnable {
 				} else if (ang >= 360) {
 					ang -= 360;
 				}
-				ge.setCameraParams(gy, gx, 300.0, AltitudeModeGE.RelativeToGroundAltitudeGE, Config.altLevel[alt], vangLevel[alt], ang, speed);
+				ge.setCameraParams(gy, gx, 300.0, AltitudeModeGE.RelativeToGroundAltitudeGE, Config.ALT_LEVEL[alt], Config.HORIZON_ANGLE[alt], ang, speed);
 			} catch (Exception e) {
 				//System.out.println("update " + gy + " " + gx + " " + alt);
 			}
@@ -357,15 +317,13 @@ public class CommObject implements Runnable {
 	}
 	
 	public void resetGoogleEarth () {
-		switchContentKML("C:/rivers/build/res/icons.kml");
-		ge.openKmlFile("C:/rivers/build/res/videos.kml", 0);
-		gy = gyStart;
-		gx = gxStart;
+		gy = Config.START_GY;
+		gx = Config.START_GX;
 		alt = 0;
-		ang = angStart;
-		vang = vangLevel[0];
+		ang = Config.START_ANGLE;
+		vang = Config.HORIZON_ANGLE[0];
 
-		updateGoogleEarth(SLOW);
+		updateGoogleEarth(Config.PAN_SLOW);
 	}
 
 }
