@@ -181,23 +181,21 @@ public class CommObjectSecondary implements Runnable {
 
 		private Player player;
 
-		private String[] audio = new String[] { "1.mp3", "2.mp3", "3.mp3" };
-
 		public AudioPlayer() {
 			new Thread(this).start();
 		}
 
 		public void run() {
 			while (true) {
-				System.out.println("Starting " + audio[alt]);
+				String audioFile = Paths.AUDIO_DIR + alt + ".mp3";
+				System.out.println("Starting " + audioFile);
 				try {
-					FileInputStream fis = new FileInputStream(Paths.RES_DIR
-							+ audio[alt]);
+					FileInputStream fis = new FileInputStream(audioFile);
 					BufferedInputStream bis = new BufferedInputStream(fis);
 					player = new Player(bis);
 					player.play();
 				} catch (Exception e) {
-					System.out.println("Problem playing file " + audio[alt]);
+					System.out.println("Problem playing file " + audioFile);
 					System.out.println(e);
 					break;
 				}

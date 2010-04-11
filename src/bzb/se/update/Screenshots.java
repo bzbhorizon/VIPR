@@ -47,7 +47,7 @@ public class Screenshots {
 								Scrender scrender = new Scrender();
 								scrender.init();
 								scrender.render(mediaURL, new File(
-										Paths.SCREENSHOT_DIR
+										Paths.CONTENT_DIR
 												+ firstElement.getAttribute(
 														"markerRecord").trim()
 												+ ".jpg"));
