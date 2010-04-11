@@ -44,7 +44,7 @@ public class Screenshots {
 							try {		
 								Scrender scrender = new Scrender();
 								scrender.init();
-								scrender.render(mediaURL, new File("./screenshots/" + firstElement.getAttribute("markerRecord").trim() + ".jpg"));
+								scrender.render(mediaURL, new File("res/screenshots/" + firstElement.getAttribute("markerRecord").trim() + ".jpg"));
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
