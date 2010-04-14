@@ -1,4 +1,12 @@
-<installation>
-	<mainScreen ip="192.168.1.69" port="50000" />
-	<secondaryScreen ip="192.168.1.69" port="49999" />
+<installation name="Rivers">
+	<altitude>
+		<level number="0">1000000</level>
+		<level number="1">90000</level>
+		<level number="2">1500</level>
+		<level number="3">500</level>
+	</altitude>
+	<screens>
+		<main ip="192.168.1.69" port="50000" />
+		<secondary ip="192.168.1.69" port="49999" />
+	</screens>
 </installation>

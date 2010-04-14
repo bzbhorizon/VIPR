@@ -1,9 +1,7 @@
 package bzb.se.installation;
 
 
-public abstract class Config {
-
-	public static final int ALT_LEVEL[] = new int[] {1000000,90000,1500};
+public abstract class ConfigToFile {
 	
 	public static final int HORIZON_ANGLE[] = new int[] {0,15,55};
 	

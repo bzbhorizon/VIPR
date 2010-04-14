@@ -64,7 +64,7 @@ public class SecondaryScreen implements Runnable {
 	private String currentContent = "";
 	
 	public SecondaryScreen () {
-		this(Screens.PORT_SECONDARY);
+		this(Meta.PORT_SECONDARY);
 	}
 
 	public SecondaryScreen(final int port) {
@@ -146,8 +146,8 @@ public class SecondaryScreen implements Runnable {
 						distance = temp;
 					}
 				}
-				if (Config.WANDER_RESTRICT
-						&& distance < Config.WANDER_LIMIT[alt] / 6) {
+				if (ConfigToFile.WANDER_RESTRICT
+						&& distance < ConfigToFile.WANDER_LIMIT[alt] / 6) {
 					try {
 						explorer
 								.browse(new URI(new File(Paths.RES_DIR

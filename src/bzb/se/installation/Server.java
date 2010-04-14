@@ -16,13 +16,13 @@ public class Server {
 
 				if (args[0].equals("1")) {
 					if (args.length > 1) {
-						if (Screens.isMainScreen(ip, Integer.valueOf(args[1]))) {
+						if (Meta.isMainScreen(ip, Integer.valueOf(args[1]))) {
 							new Thread(new MainScreen(Integer.valueOf(args[1]))).start();
 						} else {
 							System.out.println("blah");
 						}
 					} else {
-						if (Screens.isMainScreen(ip, Screens.PORT_MAIN)) {
+						if (Meta.isMainScreen(ip, Meta.PORT_MAIN)) {
 							new Thread(new MainScreen()).start();
 						} else {
 							System.out.println("blah");
@@ -30,8 +30,8 @@ public class Server {
 					}
 				} else if (args[0].equals("2")) {
 					if (args.length > 1) {
-						if (Screens.isScreen(ip, Integer.valueOf(args[1]))) {
-							if (!Screens.isMainScreen(ip, Integer.valueOf(args[1]))) {
+						if (Meta.isScreen(ip, Integer.valueOf(args[1]))) {
+							if (!Meta.isMainScreen(ip, Integer.valueOf(args[1]))) {
 								new Thread(new SecondaryScreen(Integer.valueOf(args[1]))).start();
 							} else {
 								new Thread(new MainScreen(Integer.valueOf(args[1]))).start();
@@ -40,7 +40,7 @@ public class Server {
 							System.out.println("blah");
 						}
 					} else {
-						if (Screens.isScreen(ip, Screens.PORT_SECONDARY)) {
+						if (Meta.isScreen(ip, Meta.PORT_SECONDARY)) {
 							new Thread(new SecondaryScreen()).start();
 						} else {
 							System.out.println("blah");

@@ -30,11 +30,11 @@ public class MainScreen implements Runnable {
 	
 	private IApplicationGE ge;
 
-	private double gy = Config.START_GY; //180 -> -180
-	private double gx = Config.START_GX; //90 -> -90
+	private double gy = ConfigToFile.START_GY; //180 -> -180
+	private double gx = ConfigToFile.START_GX; //90 -> -90
 	private int alt = 0;
-	private double ang = Config.START_ANGLE;
-	private double vang = Config.HORIZON_ANGLE[0];
+	private double ang = ConfigToFile.START_ANGLE;
+	private double vang = ConfigToFile.HORIZON_ANGLE[0];
 
 	private long lastUpdate = 0;
 
@@ -42,7 +42,7 @@ public class MainScreen implements Runnable {
 	private String currentControl = "";
 	
 	public MainScreen () {
-		this(Screens.PORT_MAIN);
+		this(Meta.PORT_MAIN);
 	}
 	
 	public MainScreen (final int port) {
@@ -74,7 +74,7 @@ public class MainScreen implements Runnable {
 		new Thread(
 			new Runnable() {
 				public void run() {
-					ArrayList secondaryScreens = Screens.getSecondaryScreens();
+					ArrayList secondaryScreens = Meta.getSecondaryScreens();
 					Iterator i = secondaryScreens.iterator();
 					while (i.hasNext()) {
 						String ip = "";
@@ -215,7 +215,7 @@ public class MainScreen implements Runnable {
 					accelData[0] = Double.parseDouble(command.substring(0, i));
 					accelData[1] = Double.parseDouble(command.substring(i + 1, command.length()));
 					updatePosition();
-					updateGoogleEarth(Config.PAN_INSTANT);
+					updateGoogleEarth(ConfigToFile.PAN_INSTANT);
 					lastUpdated = System.currentTimeMillis();
 				} catch (Exception e) {
 					System.out.println("burp");
@@ -282,10 +282,10 @@ public class MainScreen implements Runnable {
 
 		if (!(dx < 0.15 && dx > -0.15) ||
 				!(dy < 0.15 && dy > -0.15)) {
-			dx = delay * Config.SPEED_BASE * Config.ALT_LEVEL[alt]/Config.ALT_LEVEL[0] * dx * Config.SPEED_MODIFIER[alt];
-			dy = delay * Config.SPEED_BASE * Config.ALT_LEVEL[alt]/Config.ALT_LEVEL[0] * dy * Config.SPEED_MODIFIER[alt];
+			dx = delay * ConfigToFile.SPEED_BASE * Meta.getAltitudeForLevel(alt)/Meta.getAltitudeForLevel(0) * dx * ConfigToFile.SPEED_MODIFIER[alt];
+			dy = delay * ConfigToFile.SPEED_BASE * Meta.getAltitudeForLevel(alt)/Meta.getAltitudeForLevel(0) * dy * ConfigToFile.SPEED_MODIFIER[alt];
 			
-			if ((gx + dx) > Config.BOUNDARY_LEFT[alt] && (gx + dx) < Config.BOUNDARY_RIGHT[alt] && (gy + dy) < Config.BOUNDARY_TOP[alt] && (gy + dy) > Config.BOUNDARY_BOTTOM[alt]) {
+			if ((gx + dx) > ConfigToFile.BOUNDARY_LEFT[alt] && (gx + dx) < ConfigToFile.BOUNDARY_RIGHT[alt] && (gy + dy) < ConfigToFile.BOUNDARY_TOP[alt] && (gy + dy) > ConfigToFile.BOUNDARY_BOTTOM[alt]) {
 				gx += dx;
 				if (gx > 180) {
 					gx -= 360;
@@ -311,33 +311,33 @@ public class MainScreen implements Runnable {
 	
 	public void rotateLeft () {
 		ang += 90;
-		updateGoogleEarth(Config.PAN_SLOW);
+		updateGoogleEarth(ConfigToFile.PAN_SLOW);
 	}
 
 	public void rotateRight () {
 		ang -= 90;
-		updateGoogleEarth(Config.PAN_SLOW);
+		updateGoogleEarth(ConfigToFile.PAN_SLOW);
 	}
 
 	public void zoomIn () {
-		if (alt < Config.ALT_LEVEL.length - 1) {
+		if (alt < Meta.getNumberOfAltitudeLevels() - 1) {
 			alt++;
-			if (!(gx > Config.BOUNDARY_LEFT[alt] && gx < Config.BOUNDARY_RIGHT[alt] && gy < Config.BOUNDARY_TOP[alt] && gy > Config.BOUNDARY_BOTTOM[alt])) {
-				gy = Config.START_GY;
-				gx = Config.START_GX;
+			if (!(gx > ConfigToFile.BOUNDARY_LEFT[alt] && gx < ConfigToFile.BOUNDARY_RIGHT[alt] && gy < ConfigToFile.BOUNDARY_TOP[alt] && gy > ConfigToFile.BOUNDARY_BOTTOM[alt])) {
+				gy = ConfigToFile.START_GY;
+				gx = ConfigToFile.START_GX;
 			}
-			updateGoogleEarth(Config.PAN_SLOW);
+			updateGoogleEarth(ConfigToFile.PAN_SLOW);
 		}
 	}
 	
 	public void zoomOut () {
 		if (alt > 0) {
 			alt--;
-			if (!(gx > Config.BOUNDARY_LEFT[alt] && gx < Config.BOUNDARY_RIGHT[alt] && gy < Config.BOUNDARY_TOP[alt] && gy > Config.BOUNDARY_BOTTOM[alt])) {
-				gy = Config.START_GY;
-				gx = Config.START_GX;
+			if (!(gx > ConfigToFile.BOUNDARY_LEFT[alt] && gx < ConfigToFile.BOUNDARY_RIGHT[alt] && gy < ConfigToFile.BOUNDARY_TOP[alt] && gy > ConfigToFile.BOUNDARY_BOTTOM[alt])) {
+				gy = ConfigToFile.START_GY;
+				gx = ConfigToFile.START_GX;
 			}
-			updateGoogleEarth(Config.PAN_SLOW);
+			updateGoogleEarth(ConfigToFile.PAN_SLOW);
 		}
 	}
 	
@@ -349,7 +349,7 @@ public class MainScreen implements Runnable {
 				} else if (ang >= 360) {
 					ang -= 360;
 				}
-				ge.setCameraParams(gy, gx, 300.0, AltitudeModeGE.RelativeToGroundAltitudeGE, Config.ALT_LEVEL[alt], Config.HORIZON_ANGLE[alt], ang, speed);
+				ge.setCameraParams(gy, gx, 300.0, AltitudeModeGE.RelativeToGroundAltitudeGE, Meta.getAltitudeForLevel(alt), ConfigToFile.HORIZON_ANGLE[alt], ang, speed);
 			} catch (Exception e) {
 				//System.out.println("update " + gy + " " + gx + " " + alt);
 			}
@@ -357,13 +357,13 @@ public class MainScreen implements Runnable {
 	}
 	
 	public void resetGoogleEarth () {
-		gy = Config.START_GY;
-		gx = Config.START_GX;
+		gy = ConfigToFile.START_GY;
+		gx = ConfigToFile.START_GX;
 		alt = 0;
-		ang = Config.START_ANGLE;
-		vang = Config.HORIZON_ANGLE[0];
+		ang = ConfigToFile.START_ANGLE;
+		vang = ConfigToFile.HORIZON_ANGLE[0];
 
-		updateGoogleEarth(Config.PAN_SLOW);
+		updateGoogleEarth(ConfigToFile.PAN_SLOW);
 	}
 
 }

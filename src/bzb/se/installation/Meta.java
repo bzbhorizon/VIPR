@@ -15,7 +15,7 @@ import org.xml.sax.SAXParseException;
 
 import bzb.se.Paths;
 
-public abstract class Screens {
+public abstract class Meta {
 
 	public static final int PORT_MAIN = 50000;
 	public static final int PORT_SECONDARY = 49999;
@@ -44,10 +44,47 @@ public abstract class Screens {
 		}
 		return null;
 	}
+	
+	public static String getInstallationName () {
+		Document doc = readInstallationConfig();
+		if (doc.getDocumentElement().hasAttribute("name")) {
+			return doc.getDocumentElement().getAttribute("name");
+		} else {
+			return null;
+		}
+	}
+	
+	public static int getNumberOfAltitudeLevels () {
+		Document doc = readInstallationConfig();
+		NodeList levels = doc.getElementsByTagName("level");
+		return levels.getLength();
+	}
+	
+	public static int getAltitudeForLevel (int level) {
+		Document doc = readInstallationConfig();
+		NodeList levels = doc.getElementsByTagName("level");
+		level = levels.getLength() - level; // Darryn numbers from 4 (lowest) to 1 (highest); I number from 0 (lowest) upwards
+		for (int s = 0; s < levels.getLength(); s++) {
+			Node firstNode = levels.item(s);
+			if (firstNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element firstElement = (Element) firstNode;
+				if (firstElement.hasAttribute("number") && Integer.parseInt(firstElement.getAttribute("number")) == level) {
+					return Integer.parseInt(firstElement.getTextContent());
+				}
+			}
+		}
+		return 0;
+	}
+	
+	public static int getIconScaleForLevel (int level) {
+		int altitude = getAltitudeForLevel(level);
+		int scale = (int)(Math.sqrt(altitude) / 20.0); // a guess
+		return scale;
+	}
 
 	private static Node getMainScreen() {
 		Document doc = readInstallationConfig();
-		NodeList mainScreens = doc.getElementsByTagName("mainScreen");
+		NodeList mainScreens = doc.getElementsByTagName("main");
 		int total = mainScreens.getLength();
 		System.out.println("Total main screens: " + total);
 		return mainScreens.item(0);
@@ -97,7 +134,7 @@ public abstract class Screens {
 
 	public static boolean isScreen(String targetIp, int targetPort) {
 		Document doc = readInstallationConfig();
-		NodeList mainScreens = doc.getElementsByTagName("mainScreen");
+		NodeList mainScreens = doc.getElementsByTagName("main");
 		for (int s = 0; s < mainScreens.getLength(); s++) {
 			Node firstNode = mainScreens.item(s);
 			if (firstNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -114,7 +151,7 @@ public abstract class Screens {
 			}
 		}
 
-		NodeList secondaryScreens = doc.getElementsByTagName("secondaryScreen");
+		NodeList secondaryScreens = doc.getElementsByTagName("secondary");
 		for (int s = 0; s < secondaryScreens.getLength(); s++) {
 			Node firstNode = secondaryScreens.item(s);
 			if (firstNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -138,7 +175,7 @@ public abstract class Screens {
 		ArrayList screens = new ArrayList();
 		
 		Document doc = readInstallationConfig();
-		NodeList secondaryScreens = doc.getElementsByTagName("secondaryScreen");
+		NodeList secondaryScreens = doc.getElementsByTagName("secondary");
 		for (int s = 0; s < secondaryScreens.getLength(); s++) {
 			Node firstNode = secondaryScreens.item(s);
 			if (firstNode.getNodeType() == Node.ELEMENT_NODE) {
