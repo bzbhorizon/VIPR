@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -51,9 +52,13 @@ public class MainScreen implements Runnable {
 			new Thread(new Runnable() {
 				public void run () {
 					ge = ClassFactory.createApplicationGE();
-					ge.openKmlFile(Paths.ICONS_OVERLAY_URL, 0);
+					ge.openKmlFile(new File(Paths.ICONS_OVERLAY_URL).getAbsolutePath(), 0);
 					resetGoogleEarth();
-					System.out.println("Started main Google Earth installation display on " + InetAddress.getLocalHost().getHostAddress() + ":" + port);
+					try {
+						System.out.println("Started main Google Earth installation display on " + InetAddress.getLocalHost().getHostAddress() + ":" + port);
+					} catch (UnknownHostException e) {
+						e.printStackTrace();
+					}
 				}
 			}).start();
 
@@ -72,8 +77,8 @@ public class MainScreen implements Runnable {
 					ArrayList secondaryScreens = Screens.getSecondaryScreens();
 					Iterator i = secondaryScreens.iterator();
 					while (i.hasNext()) {
-						String ip;
-						int port;
+						String ip = "";
+						int port = -1;
 						try {
 							ArrayList thisScreen = (ArrayList) i.next();
 							ip = (String)thisScreen.get(0);
@@ -108,7 +113,7 @@ public class MainScreen implements Runnable {
 					b = new byte[length];
 					is.read(b);
 					st = new String(b);
-					process(st);
+					new Thread(new ProcessThread(st)).start();
 				}
 				
 				if (is != null) {
@@ -145,67 +150,76 @@ public class MainScreen implements Runnable {
 
 	private long lastUpdated = 0;
 
-	private void process (String command) {
-		if (command.startsWith("z")) {
-			if (command.equals("z0")) {
-				zoomIn();
-			} else if (command.equals("z1")) {
-				zoomOut();
-			}
-			try {
-				String message = "z" + alt;
-				for (int i = 0; i < dos.size(); i++) {
-					dos.get(i).write(message.length());
-					dos.get(i).flush();
-					dos.get(i).write(message.getBytes());
-					dos.get(i).flush();
-				}
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
-		} else if (command.startsWith("c")) {
-			try {
-				String message = "c" + gx + "," + gy + "," + alt;
-				for (int i = 0; i < dos.size(); i++) {
-					dos.get(i).write(message.length());
-					dos.get(i).flush();
-					dos.get(i).write(message.getBytes());
-					dos.get(i).flush();
-				}
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
-		} else if (command.startsWith("e")) {
-			resetGoogleEarth();
-			try {
-				String message = "e";
-				for (int i = 0; i < dos.size(); i++) {
-					dos.get(i).write(message.length());
-					dos.get(i).flush();
-					dos.get(i).write(message.getBytes());
-					dos.get(i).flush();
-				}
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
-		} else if (command.startsWith("r")) {
-			if (command.equals("r0")) {
-				rotateLeft();
-			} else if (command.equals("r1")) {
-				rotateRight();
-			}
-		} else if (command.startsWith("h")) {
+	private class ProcessThread implements Runnable {
 		
-		} else if (System.currentTimeMillis() - lastUpdated > 1) {
-			try {
-				i = command.indexOf('.');
-				accelData[0] = Double.parseDouble(command.substring(0, i));
-				accelData[1] = Double.parseDouble(command.substring(i + 1, command.length()));
-				updatePosition();
-				updateGoogleEarth(Config.PAN_INSTANT);
-				lastUpdated = System.currentTimeMillis();
-			} catch (Exception e) {
-				System.out.println("burp");
+		private String command;
+		
+		public ProcessThread (String command) {
+			this.command = command;
+		}
+		
+		public void run () {
+			if (command.startsWith("z")) {
+				if (command.equals("z0")) {
+					zoomIn();
+				} else if (command.equals("z1")) {
+					zoomOut();
+				}
+				try {
+					String message = "z" + alt;
+					for (int i = 0; i < dos.size(); i++) {
+						dos.get(i).write(message.length());
+						dos.get(i).flush();
+						dos.get(i).write(message.getBytes());
+						dos.get(i).flush();
+					}
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+			} else if (command.startsWith("c")) {
+				try {
+					String message = "c" + gx + "," + gy + "," + alt;
+					for (int i = 0; i < dos.size(); i++) {
+						dos.get(i).write(message.length());
+						dos.get(i).flush();
+						dos.get(i).write(message.getBytes());
+						dos.get(i).flush();
+					}
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+			} else if (command.startsWith("e")) {
+				resetGoogleEarth();
+				try {
+					String message = "e";
+					for (int i = 0; i < dos.size(); i++) {
+						dos.get(i).write(message.length());
+						dos.get(i).flush();
+						dos.get(i).write(message.getBytes());
+						dos.get(i).flush();
+					}
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+			} else if (command.startsWith("r")) {
+				if (command.equals("r0")) {
+					rotateLeft();
+				} else if (command.equals("r1")) {
+					rotateRight();
+				}
+			} else if (command.startsWith("h")) {
+			
+			} else if (System.currentTimeMillis() - lastUpdated > 1) {
+				try {
+					i = command.indexOf('.');
+					accelData[0] = Double.parseDouble(command.substring(0, i));
+					accelData[1] = Double.parseDouble(command.substring(i + 1, command.length()));
+					updatePosition();
+					updateGoogleEarth(Config.PAN_INSTANT);
+					lastUpdated = System.currentTimeMillis();
+				} catch (Exception e) {
+					System.out.println("burp");
+				}
 			}
 		}
 	}

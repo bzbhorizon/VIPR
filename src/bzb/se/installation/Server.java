@@ -9,13 +9,13 @@ public class Server {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		if (args[0] != null) {
+		if (args.length > 0) {
 			String ip;
 			try {
 				ip = InetAddress.getLocalHost().getHostAddress();
 
 				if (args[0].equals("1")) {
-					if (args[1] != null) {
+					if (args.length > 1) {
 						if (Screens.isMainScreen(ip, Integer.valueOf(args[1]))) {
 							new Thread(new MainScreen(Integer.valueOf(args[1]))).start();
 						} else {
@@ -29,7 +29,7 @@ public class Server {
 						}
 					}
 				} else if (args[0].equals("2")) {
-					if (args[1] != null) {
+					if (args.length > 1) {
 						if (Screens.isScreen(ip, Integer.valueOf(args[1]))) {
 							if (!Screens.isMainScreen(ip, Integer.valueOf(args[1]))) {
 								new Thread(new SecondaryScreen(Integer.valueOf(args[1]))).start();
@@ -53,5 +53,4 @@ public class Server {
 			}
 		}
 	}
-
 }

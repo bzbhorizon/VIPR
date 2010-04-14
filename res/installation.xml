@@ -1,4 +1,4 @@
 <installation>
-	<mainScreen ip="192.168.1.68" port="50000" />
-	<secondaryScreen ip="192.168.1.68" port="49999" />
+	<mainScreen ip="192.168.1.69" port="50000" />
+	<secondaryScreen ip="192.168.1.69" port="49999" />
 </installation>
