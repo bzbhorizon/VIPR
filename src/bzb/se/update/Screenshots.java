@@ -1,6 +1,9 @@
 package bzb.se.update;
 
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+
 import org.w3c.dom.*;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -46,11 +49,12 @@ public class Screenshots {
 							try {
 								Scrender scrender = new Scrender();
 								scrender.init();
-								scrender.render(mediaURL, new File(
-										Paths.CONTENT_DIR
-												+ firstElement.getAttribute(
-														"markerRecord").trim()
-												+ ".jpg"));
+								String id = firstElement.getAttribute("markerRecord").trim();
+								scrender.render(mediaURL, new File(Paths.CONTENT_DIR + id + ".jpg"));
+
+							      File file= new File(Paths.CONTENT_DIR + id + ".html");
+							      DataOutputStream dos=new DataOutputStream(new FileOutputStream(file));
+							      dos.writeUTF("<html><head><link href=\"" + Paths.CONTENT_STYLESHEET + "\" type=\"text/css\" rel=\"stylesheet\" media=\"screen\" /></head><body><div id=\"centeredcontent\"><img src=\"" + id + ".jpg\" /></div></body></html>");
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
