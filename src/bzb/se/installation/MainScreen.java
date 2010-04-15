@@ -74,15 +74,14 @@ public class MainScreen implements Runnable {
 		new Thread(
 			new Runnable() {
 				public void run() {
-					ArrayList secondaryScreens = Meta.getSecondaryScreens();
-					Iterator i = secondaryScreens.iterator();
+					Iterator<ArrayList<String>> i = Meta.getSecondaryScreens().iterator();
 					while (i.hasNext()) {
 						String ip = "";
 						int port = -1;
 						try {
-							ArrayList thisScreen = (ArrayList) i.next();
-							ip = (String)thisScreen.get(0);
-							port = Integer.parseInt((String)thisScreen.get(1));
+							ArrayList<String> thisScreen = i.next();
+							ip = thisScreen.get(0);
+							port = Integer.parseInt(thisScreen.get(1));
 							so.add(new Socket(ip, port));
 							dos.add(so.get(so.size() - 1).getOutputStream());
 							System.out.println("Connected to secondary Google Earth installation display on "+ ip + ":" + port);
@@ -320,7 +319,7 @@ public class MainScreen implements Runnable {
 	}
 
 	public void zoomIn () {
-		if (alt < Meta.getNumberOfAltitudeLevels() - 1) {
+		if (alt < Meta.getAltitudeLevels().length - 1) {
 			alt++;
 			if (!(gx > ConfigToFile.BOUNDARY_LEFT[alt] && gx < ConfigToFile.BOUNDARY_RIGHT[alt] && gy < ConfigToFile.BOUNDARY_TOP[alt] && gy > ConfigToFile.BOUNDARY_BOTTOM[alt])) {
 				gy = ConfigToFile.START_GY;

@@ -1,9 +1,10 @@
 <installation name="Rivers">
 	<altitude>
 		<level number="0">1000000</level>
-		<level number="1">90000</level>
-		<level number="2">1500</level>
-		<level number="3">500</level>
+		<level number="1">200000</level>
+		<level number="2">90000</level>
+		<level number="3">1500</level>
+		<level number="4">500</level>
 	</altitude>
 	<screens>
 		<main ip="192.168.1.69" port="50000" />

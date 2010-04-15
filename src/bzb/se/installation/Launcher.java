@@ -3,12 +3,14 @@ package bzb.se.installation;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class Server {
+public class Launcher {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		Meta.readConfig();
+		
 		if (args.length > 0) {
 			String ip;
 			try {

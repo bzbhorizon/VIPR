@@ -1,2 +1,2 @@
-java -cp .;lib/* bzb.se.installation.Server 1
+java -cp .;lib/* bzb.se.installation.Launcher 1
 pause

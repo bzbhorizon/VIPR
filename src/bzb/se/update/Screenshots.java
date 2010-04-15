@@ -34,6 +34,7 @@ public class Screenshots {
 			int total = markers.getLength();
 			System.out.println("Total markers: " + total);
 			
+			Meta.readConfig();
 			DataOutputStream bigDos = new DataOutputStream(
 					new FileOutputStream(new File(Paths.ICONS_OVERLAY_URL)));
 			bigDos
