@@ -28,7 +28,6 @@ public class MainScreen implements Runnable {
 	private double gx = ConfigToFile.START_GX; //90 -> -90
 	private int alt = 0;
 	private double ang = ConfigToFile.START_ANGLE;
-	private double vang = ConfigToFile.HORIZON_ANGLE[0];
 
 	private long lastUpdate = 0;
 	
@@ -350,7 +349,6 @@ public class MainScreen implements Runnable {
 		gx = ConfigToFile.START_GX;
 		alt = 0;
 		ang = ConfigToFile.START_ANGLE;
-		vang = ConfigToFile.HORIZON_ANGLE[0];
 
 		updateGoogleEarth(ConfigToFile.PAN_SLOW);
 	}
