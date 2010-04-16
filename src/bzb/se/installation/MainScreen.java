@@ -1,26 +1,20 @@
 package bzb.se.installation;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.FileReader;
-import java.io.File;
-import java.io.FileWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import java.net.URI;
+
+import com.jacob.com.Dispatch;
+import com.jacob.com.Variant;
 
 import bzb.se.Paths;
-
-import com4j.ClassFactory;
-import com4j.IApplicationGE;
-import com4j.AltitudeModeGE;
 
 public class MainScreen implements Runnable {
 
@@ -28,8 +22,8 @@ public class MainScreen implements Runnable {
 	
 	public boolean run;
 	
-	private IApplicationGE ge;
-
+	private Dispatch googleEarth;
+	
 	private double gy = ConfigToFile.START_GY; //180 -> -180
 	private double gx = ConfigToFile.START_GX; //90 -> -90
 	private int alt = 0;
@@ -37,9 +31,6 @@ public class MainScreen implements Runnable {
 	private double vang = ConfigToFile.HORIZON_ANGLE[0];
 
 	private long lastUpdate = 0;
-
-	private String currentContent = "";
-	private String currentControl = "";
 	
 	public MainScreen () {
 		this(Meta.PORT_MAIN);
@@ -51,8 +42,9 @@ public class MainScreen implements Runnable {
 
 			new Thread(new Runnable() {
 				public void run () {
-					ge = ClassFactory.createApplicationGE();
-					ge.openKmlFile(new File(Paths.ICONS_OVERLAY_URL).getAbsolutePath(), 0);
+					googleEarth = new Dispatch("GoogleEarth.ApplicationGE"); 
+					Dispatch.call(googleEarth,"OpenKmlFile",new Variant(new File(Paths.ICONS_OVERLAY_URL).getAbsolutePath()),new Variant(true)); 
+					
 					resetGoogleEarth();
 					try {
 						System.out.println("Started main Google Earth installation display on " + InetAddress.getLocalHost().getHostAddress() + ":" + port);
@@ -341,17 +333,15 @@ public class MainScreen implements Runnable {
 	}
 	
 	public void updateGoogleEarth (double speed) {
-		if (ge != null) {
-			try {
-				if (ang < 0) {
-					ang += 360;
-				} else if (ang >= 360) {
-					ang -= 360;
-				}
-				ge.setCameraParams(gy, gx, 300.0, AltitudeModeGE.RelativeToGroundAltitudeGE, Meta.getAltitudeForLevel(alt), ConfigToFile.HORIZON_ANGLE[alt], ang, speed);
-			} catch (Exception e) {
-				//System.out.println("update " + gy + " " + gx + " " + alt);
+		if (googleEarth != null) {
+			if (ang < 0) {
+				ang += 360;
+			} else if (ang >= 360) {
+				ang -= 360;
 			}
+			Dispatch.call(googleEarth,"SetCameraParams",new Variant(gy),new
+					   Variant(gx),new Variant(Meta.getAltitudeForLevel(alt)),new Variant(1),new
+					   Variant(300),new Variant(ConfigToFile.HORIZON_ANGLE[alt]),new Variant(ang),new Variant(speed));
 		}
 	}
 	

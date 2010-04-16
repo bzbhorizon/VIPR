@@ -9,16 +9,13 @@
 	<property name="builtRes" location="${build}/res" />
 	<property name="bat" location="bat" />
 	<property name="software" location="software" />
-	<property name="GoogleEarthExe" location="C:\Program Files\Google\Google Earth\googleearth.exe" />
-	<property name="builtCom4j" location="${build}/com4j" />
-	<property name="srcCom4j" location="${src}/com4j" />
 	<property name="winJava" location="C:\Windows\java" />
+	<property name="winSystem" location="C:\Windows\system32" />
 
 	<target name="init" description="Prepare the filesystem for compilation">
 		<tstamp />
 		<mkdir dir="${build}" />
 		<mkdir dir="${builtRes}" />
-		<mkdir dir="${builtCom4j}" />
 		<copy todir="${builtRes}">
 			<fileset dir="${res}" />
 		</copy>
@@ -34,13 +31,11 @@
 			</fileset>
 		</copy>
 		<copy todir="${winJava}" file="${software}/.jmfdir" />
-		<java jar="${software}/tlbimp.jar" fork="true">
-			<arg value="-o" />
-			<arg value="src" />
-			<arg value="-p" />
-			<arg value="com4j" />
-			<arg value="${GoogleEarthExe}" />
-		</java>
+		<copy todir="${winSystem}">
+			<fileset dir="${software}">
+				<include name="jacob*" />
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="compile" depends="init" description="Compile the source">
@@ -53,9 +48,6 @@
 				<pathelement path="./${src}" />
 			</classpath>
 		</javac>
-		<delete>
-			<fileset dir="${srcCom4j}" />
-		</delete>
 	</target>
 
 	<target name="clean" description="Remove the components">

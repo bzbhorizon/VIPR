@@ -50,11 +50,9 @@ public class Meta {
 			doc.getDocumentElement().normalize();
 
 			config = doc;
-			System.out.println(".");
 			if (config.getDocumentElement().hasAttribute("name")) {
 				installationName = config.getDocumentElement().getAttribute("name");
 			}
-			System.out.println(".");
 			NodeList levels = config.getElementsByTagName("level");
 			altitudeLevels = new int[levels.getLength()];
 			for (int i = 0; i < levels.getLength(); i++) {
@@ -66,7 +64,6 @@ public class Meta {
 					}
 				}
 			}
-			System.out.println(".");
 			NodeList mainScreens = config.getElementsByTagName("main");
 			int total = mainScreens.getLength();
 			System.out.println("Total main screens: " + total);
@@ -92,7 +89,6 @@ public class Meta {
 					System.out.println("No port");
 				}
 			}
-			System.out.println(".");
 			NodeList screens = config.getElementsByTagName("secondary");
 			for (int s = 0; s < screens.getLength(); s++) {
 				Node firstNode = screens.item(s);
@@ -120,7 +116,6 @@ public class Meta {
 	}
 				
 	public static int getAltitudeForLevel (int level) {
-		level = altitudeLevels.length - level; // Darryn numbers from 4 (lowest) to 1 (highest); I number from 0 (lowest) upwards
 		return altitudeLevels[level];
 	}
 	
