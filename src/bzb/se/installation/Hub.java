@@ -16,7 +16,7 @@ import com.jacob.com.Variant;
 
 import bzb.se.Paths;
 
-public class MainScreen implements Runnable {
+public class Hub implements Runnable {
 
 	private ServerSocket ss;
 	
@@ -24,18 +24,22 @@ public class MainScreen implements Runnable {
 	
 	private Dispatch googleEarth;
 	
-	private double gy = ConfigToFile.START_GY; //180 -> -180
-	private double gx = ConfigToFile.START_GX; //90 -> -90
+	private double gy = Meta.getStart()[1]; //180 -> -180
+	private double gx = Meta.getStart()[0]; //90 -> -90
 	private int alt = 0;
-	private double ang = ConfigToFile.START_ANGLE;
+	private double ang = Meta.getStart()[2];
+	
+	private static final double PAN_INSTANT = 5;
+	private static final double PAN_SLOW = 0.75;
+	private static final double SPEED_BASE = 0.0025;
 
 	private long lastUpdate = 0;
 	
-	public MainScreen () {
+	public Hub () {
 		this(Meta.PORT_MAIN);
 	}
 	
-	public MainScreen (final int port) {
+	public Hub (final int port) {
 		try {
 			ss = new ServerSocket(port);
 
@@ -205,7 +209,7 @@ public class MainScreen implements Runnable {
 					accelData[0] = Double.parseDouble(command.substring(0, i));
 					accelData[1] = Double.parseDouble(command.substring(i + 1, command.length()));
 					updatePosition();
-					updateGoogleEarth(ConfigToFile.PAN_INSTANT);
+					updateGoogleEarth(PAN_INSTANT);
 					lastUpdated = System.currentTimeMillis();
 				} catch (Exception e) {
 					System.out.println("burp");
@@ -272,10 +276,10 @@ public class MainScreen implements Runnable {
 
 		if (!(dx < 0.15 && dx > -0.15) ||
 				!(dy < 0.15 && dy > -0.15)) {
-			dx = delay * ConfigToFile.SPEED_BASE * Meta.getAltitudeForLevel(alt)/Meta.getAltitudeForLevel(0) * dx * ConfigToFile.SPEED_MODIFIER[alt];
-			dy = delay * ConfigToFile.SPEED_BASE * Meta.getAltitudeForLevel(alt)/Meta.getAltitudeForLevel(0) * dy * ConfigToFile.SPEED_MODIFIER[alt];
+			dx = delay * SPEED_BASE * Meta.getAltitudeForLevel(alt)/Meta.getAltitudeForLevel(0) * dx;
+			dy = delay * SPEED_BASE * Meta.getAltitudeForLevel(alt)/Meta.getAltitudeForLevel(0) * dy;
 			
-			if ((gx + dx) > ConfigToFile.BOUNDARY_LEFT[alt] && (gx + dx) < ConfigToFile.BOUNDARY_RIGHT[alt] && (gy + dy) < ConfigToFile.BOUNDARY_TOP[alt] && (gy + dy) > ConfigToFile.BOUNDARY_BOTTOM[alt]) {
+			if ((gx + dx) > Meta.getBoundary(Meta.BOUNDARY_LEFT, alt) && (gx + dx) < Meta.getBoundary(Meta.BOUNDARY_RIGHT, alt) && (gy + dy) < Meta.getBoundary(Meta.BOUNDARY_TOP, alt) && (gy + dy) > Meta.getBoundary(Meta.BOUNDARY_BOTTOM, alt)) {
 				gx += dx;
 				if (gx > 180) {
 					gx -= 360;
@@ -301,33 +305,33 @@ public class MainScreen implements Runnable {
 	
 	public void rotateLeft () {
 		ang += 90;
-		updateGoogleEarth(ConfigToFile.PAN_SLOW);
+		updateGoogleEarth(PAN_SLOW);
 	}
 
 	public void rotateRight () {
 		ang -= 90;
-		updateGoogleEarth(ConfigToFile.PAN_SLOW);
+		updateGoogleEarth(PAN_SLOW);
 	}
 
 	public void zoomIn () {
 		if (alt < Meta.getAltitudeLevels().length - 1) {
 			alt++;
-			if (!(gx > ConfigToFile.BOUNDARY_LEFT[alt] && gx < ConfigToFile.BOUNDARY_RIGHT[alt] && gy < ConfigToFile.BOUNDARY_TOP[alt] && gy > ConfigToFile.BOUNDARY_BOTTOM[alt])) {
-				gy = ConfigToFile.START_GY;
-				gx = ConfigToFile.START_GX;
+			if (!(gx > Meta.getBoundary(Meta.BOUNDARY_LEFT, alt) && gx < Meta.getBoundary(Meta.BOUNDARY_RIGHT, alt) && gy < Meta.getBoundary(Meta.BOUNDARY_TOP, alt) && gy > Meta.getBoundary(Meta.BOUNDARY_BOTTOM, alt))) {
+				gy = Meta.getStart()[1];
+				gx = Meta.getStart()[0];
 			}
-			updateGoogleEarth(ConfigToFile.PAN_SLOW);
+			updateGoogleEarth(PAN_SLOW);
 		}
 	}
 	
 	public void zoomOut () {
 		if (alt > 0) {
 			alt--;
-			if (!(gx > ConfigToFile.BOUNDARY_LEFT[alt] && gx < ConfigToFile.BOUNDARY_RIGHT[alt] && gy < ConfigToFile.BOUNDARY_TOP[alt] && gy > ConfigToFile.BOUNDARY_BOTTOM[alt])) {
-				gy = ConfigToFile.START_GY;
-				gx = ConfigToFile.START_GX;
+			if (!(gx > Meta.getBoundary(Meta.BOUNDARY_LEFT, alt) && gx < Meta.getBoundary(Meta.BOUNDARY_RIGHT, alt) && gy < Meta.getBoundary(Meta.BOUNDARY_TOP, alt) && gy > Meta.getBoundary(Meta.BOUNDARY_BOTTOM, alt))) {
+				gy = Meta.getStart()[1];
+				gx = Meta.getStart()[0];
 			}
-			updateGoogleEarth(ConfigToFile.PAN_SLOW);
+			updateGoogleEarth(PAN_SLOW);
 		}
 	}
 	
@@ -340,17 +344,17 @@ public class MainScreen implements Runnable {
 			}
 			Dispatch.call(googleEarth,"SetCameraParams",new Variant(gy),new
 					   Variant(gx),new Variant(Meta.getAltitudeForLevel(alt)),new Variant(1),new
-					   Variant(300),new Variant(ConfigToFile.HORIZON_ANGLE[alt]),new Variant(ang),new Variant(speed));
+					   Variant(300),new Variant(Meta.getHorizonAngle(alt)),new Variant(ang),new Variant(speed));
 		}
 	}
 	
 	public void resetGoogleEarth () {
-		gy = ConfigToFile.START_GY;
-		gx = ConfigToFile.START_GX;
+		gy = Meta.getStart()[1];
+		gx = Meta.getStart()[0];
 		alt = 0;
-		ang = ConfigToFile.START_ANGLE;
+		ang = Meta.getStart()[2];
 
-		updateGoogleEarth(ConfigToFile.PAN_SLOW);
+		updateGoogleEarth(PAN_SLOW);
 	}
 
 }

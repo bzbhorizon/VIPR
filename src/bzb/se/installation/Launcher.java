@@ -19,13 +19,13 @@ public class Launcher {
 				if (args[0].equals("1")) {
 					if (args.length > 1) {
 						if (Meta.isMainScreen(ip, Integer.valueOf(args[1]))) {
-							new Thread(new MainScreen(Integer.valueOf(args[1]))).start();
+							new Thread(new Hub(Integer.valueOf(args[1]))).start();
 						} else {
 							System.out.println("blah");
 						}
 					} else {
 						if (Meta.isMainScreen(ip, Meta.PORT_MAIN)) {
-							new Thread(new MainScreen()).start();
+							new Thread(new Hub()).start();
 						} else {
 							System.out.println("blah");
 						}
@@ -34,16 +34,16 @@ public class Launcher {
 					if (args.length > 1) {
 						if (Meta.isScreen(ip, Integer.valueOf(args[1]))) {
 							if (!Meta.isMainScreen(ip, Integer.valueOf(args[1]))) {
-								new Thread(new SecondaryScreen(Integer.valueOf(args[1]))).start();
+								new Thread(new SubScreen(Integer.valueOf(args[1]))).start();
 							} else {
-								new Thread(new MainScreen(Integer.valueOf(args[1]))).start();
+								new Thread(new Hub(Integer.valueOf(args[1]))).start();
 							}
 						} else {
 							System.out.println("blah");
 						}
 					} else {
 						if (Meta.isScreen(ip, Meta.PORT_SECONDARY)) {
-							new Thread(new SecondaryScreen()).start();
+							new Thread(new SubScreen()).start();
 						} else {
 							System.out.println("blah");
 						}

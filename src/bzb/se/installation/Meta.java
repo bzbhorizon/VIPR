@@ -26,6 +26,8 @@ public class Meta {
 	private static String mainIp;
 	private static int mainPort;
 	private static ArrayList<ArrayList<String>> secondaryScreens = new ArrayList<ArrayList<String>>();
+	private static double[] startPoint = new double[3];
+	private static boolean wanderRestrict = false;
 	
 	public static ArrayList<ArrayList<String>> getSecondaryScreens() {
 		return secondaryScreens;
@@ -89,6 +91,31 @@ public class Meta {
 					System.out.println("No port");
 				}
 			}
+			
+			NodeList googleEarths = config.getElementsByTagName("googleEarth");
+			Node googleEarth = googleEarths.item(0);
+			if (googleEarth.getNodeType() == Node.ELEMENT_NODE) {
+				Element firstElement = (Element) googleEarth;
+				if (firstElement.hasAttribute("wanderRestrict")) {
+					wanderRestrict = Boolean.parseBoolean(firstElement.getAttribute("wanderRestrict").trim());
+				}
+			}
+			
+			NodeList starts = config.getElementsByTagName("start");
+			Node googleEarthStart = starts.item(0);
+			if (googleEarthStart.getNodeType() == Node.ELEMENT_NODE) {
+				Element firstElement = (Element) googleEarthStart;
+				if (firstElement.hasAttribute("x")) {
+					startPoint[0] = Double.parseDouble(firstElement.getAttribute("x").trim());
+				}
+				if (firstElement.hasAttribute("y")) {
+					startPoint[1] = Double.parseDouble(firstElement.getAttribute("y").trim());
+				}
+				if (firstElement.hasAttribute("angle")) {
+					startPoint[2] = Double.parseDouble(firstElement.getAttribute("angle").trim());
+				}
+			}
+			
 			NodeList screens = config.getElementsByTagName("secondary");
 			for (int s = 0; s < screens.getLength(); s++) {
 				Node firstNode = screens.item(s);
@@ -114,9 +141,46 @@ public class Meta {
 			t.printStackTrace();
 		}
 	}
-				
+	
+	public static boolean wanderRestricted () {
+		return wanderRestrict;
+	}
+	
 	public static int getAltitudeForLevel (int level) {
 		return altitudeLevels[level];
+	}
+	
+	public static double[] getStart () {
+		return startPoint;
+	}
+	
+	public static int getHorizonAngle (int altLevel) {
+		return (int) Math.ceil(90.0 / (altLevel + 1));
+	}
+	
+	public static final int BOUNDARY_TOP = 0;
+	public static final int BOUNDARY_RIGHT = 1;
+	public static final int BOUNDARY_BOTTOM = 2;
+	public static final int BOUNDARY_LEFT = 3;
+	
+	public static double getBoundary (int side, int altLevel) {
+		switch (side) {
+		case BOUNDARY_TOP:
+			return getStart()[1] + getWanderLimitForLevel(altLevel); 
+		case BOUNDARY_BOTTOM:
+			return getStart()[1] - getWanderLimitForLevel(altLevel);
+		case BOUNDARY_LEFT:
+			return getStart()[0] - getWanderLimitForLevel(altLevel); 
+		case BOUNDARY_RIGHT:
+			return getStart()[0] + getWanderLimitForLevel(altLevel); 
+		default:
+			return 0;
+		}
+	}
+	
+	// to do
+	public static double getWanderLimitForLevel (int altLevel) {
+		return (double)altLevel;
 	}
 	
 	public static int getIconScaleForLevel (int level) {

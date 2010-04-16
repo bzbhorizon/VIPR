@@ -1,14 +1,18 @@
 <installation name="Rivers">
-	<altitude>
-		<level number="0">5000000</level>
-		<level number="1">1000000</level>
-		<level number="2">200000</level>
-		<level number="3">90000</level>
-		<level number="4">1500</level>
-		<level number="5">500</level>
-	</altitude>
 	<screens>
-		<main ip="192.168.1.69" port="50000" />
+		<main ip="192.168.1.69" port="50000">
+			<googleEarth wanderRestrict="false">
+				<start y="33.314729" x="44.422256" angle="1" />
+				<altitude>
+					<level number="0">5000000</level>
+					<level number="1">1000000</level>
+					<level number="2">200000</level>
+					<level number="3">90000</level>
+					<level number="4">1500</level>
+					<level number="5">500</level>
+				</altitude>
+			</googleEarth>
+		</main>
 		<secondary ip="192.168.1.69" port="49999" />
 	</screens>
 </installation>

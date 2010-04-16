@@ -16,7 +16,7 @@ import bzb.se.Paths;
 
 import javazoom.jl.player.Player;
 
-public class SecondaryScreen implements Runnable {
+public class SubScreen implements Runnable {
 
 	private ServerSocket ss;
 
@@ -61,13 +61,11 @@ public class SecondaryScreen implements Runnable {
 					// "3-10.html",
 					"3-11.html", "3-12.html" } };
 
-	private String currentContent = "";
-	
-	public SecondaryScreen () {
+	public SubScreen () {
 		this(Meta.PORT_SECONDARY);
 	}
 
-	public SecondaryScreen(final int port) {
+	public SubScreen(final int port) {
 		try {
 			ss = new ServerSocket(port);
 			audio = new AudioPlayer();
@@ -146,14 +144,14 @@ public class SecondaryScreen implements Runnable {
 						distance = temp;
 					}
 				}
-				if (ConfigToFile.WANDER_RESTRICT
-						&& distance < ConfigToFile.WANDER_LIMIT[alt] / 6) {
+				if (!Meta.wanderRestricted()
+						&& distance < Meta.getWanderLimitForLevel(alt)) {
 					try {
 						explorer
 								.browse(new URI(new File(Paths.RES_DIR
 										+ contentURLs[alt][nearest]).toURI()
 										.toString()));
-						ProcessBuilder pb = new ProcessBuilder("cmd", "/C",
+						new ProcessBuilder("cmd", "/C",
 								"start", new File(Paths.RES_DIR
 										+ contentURLs[alt][nearest]).toURI()
 										.toString());
@@ -177,7 +175,7 @@ public class SecondaryScreen implements Runnable {
 		try {
 			explorer.browse(new URI(new File(Paths.CONTENT_INDEX_URL).toURI()
 					.toString()));
-			ProcessBuilder pb = new ProcessBuilder("cmd", "/C", "start",
+			new ProcessBuilder("cmd", "/C", "start",
 					new File(Paths.CONTENT_INDEX_URL).toURI().toString());
 			alt = 0;
 			audio.reset();
