@@ -26,41 +26,6 @@ public class SubScreen implements Runnable {
 
 	private Desktop explorer;
 
-	private final double contentLocations[][][] = new double[][][] {
-			new double[][] { new double[] { 48.161482, 30.169847 },
-					new double[] { 43.622486, 35.695268 },
-					new double[] { 44.061492, 31.441489 },
-					new double[] { 41.480189, 34.444308 },
-					new double[] { 47.286224, 35.179780 } },
-			new double[][] { new double[] { 44.169586, 33.649314 },
-					new double[] { 44.752070, 33.327688 },
-					new double[] { 44.285909, 33.121396 },
-					new double[] { 44.902668, 33.983368 },
-					new double[] { 45.198297, 32.876403 },
-					new double[] { 43.647702, 33.379970 },
-					new double[] { 45.521535, 32.524551 } },
-			new double[][] { new double[] { 44.419675, 33.313808 },
-					new double[] { 44.431400, 33.304312 },
-					new double[] { 44.416214, 33.336660 },
-					new double[] { 44.354927, 33.361464 },
-					new double[] { 44.396373, 33.295514 },
-					new double[] { 44.398838, 33.302300 },
-					new double[] { 44.372460, 33.343469 },
-					new double[] { 44.419251, 33.303736 },
-					new double[] { 44.411850, 33.320887 },
-					// new double[] {44.405685, 33.326352},
-					new double[] { 44.370979, 33.271873 },
-					new double[] { 44.373461, 33.289011 } } };
-	private final String contentURLs[][] = new String[][] {
-			new String[] { "1-1.html", "1-2.html", "1-3.html", "1-4.html",
-					"1-5.html" },
-			new String[] { "2-1.html", "2-2.html", "2-3.html", "2-4.html",
-					"2-5.html", "2-6.html", "2-7.html" },
-			new String[] { "3-1.html", "3-2.html", "3-3.html", "3-4.html",
-					"3-5.html", "3-6.html", "3-7.html", "3-8.html", "3-9.html",
-					// "3-10.html",
-					"3-11.html", "3-12.html" } };
-
 	public SubScreen () {
 		this(Meta.PORT_SECONDARY);
 	}

@@ -18,7 +18,7 @@ import net.dapper.scrender.Scrender;
  *	Looks up web content and creates screenshots
  */
 
-public class Screenshots {
+public class ContentBuilder {
 
 	public static void main(String[] args) {
 		try {
@@ -139,7 +139,7 @@ public class Screenshots {
 				}// end of if clause
 
 			}// end of for loop with s var
-			
+				
 			bigDos.writeBytes("</Document>" +
 					"</kml>");
 			bigDos.close();

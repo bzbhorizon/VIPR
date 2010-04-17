@@ -18,6 +18,7 @@ public final class Paths {
 	
 	public static final String CONTENT_INDEX_URL = CONTENT_DIR + "index.html";
 	public static final String CONTENT_STYLESHEET = "style.css";
+	public static final String CONTENT_XML = CONTENT_DIR + "content.xml";
 	
 	public static final String ICONS_OVERLAY_URL = RES_DIR + "icons.kml";
 	

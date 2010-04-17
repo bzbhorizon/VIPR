@@ -28,6 +28,8 @@ public class Meta {
 	private static ArrayList<ArrayList<String>> secondaryScreens = new ArrayList<ArrayList<String>>();
 	private static double[] startPoint = new double[3];
 	private static boolean wanderRestrict = false;
+	private static double[][][] contentLocations; 
+	private static String[][] contentURLs;
 	
 	public static ArrayList<ArrayList<String>> getSecondaryScreens() {
 		return secondaryScreens;

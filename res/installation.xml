@@ -1,5 +1,5 @@
 <installation name="Rivers">
-	<screens>
+	<components>
 		<main ip="192.168.1.69" port="50000">
 			<googleEarth wanderRestrict="false">
 				<start y="33.314729" x="44.422256" angle="1" />
@@ -14,5 +14,5 @@
 			</googleEarth>
 		</main>
 		<secondary ip="192.168.1.69" port="49999" />
-	</screens>
+	</components>
 </installation>

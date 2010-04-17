@@ -149,8 +149,8 @@ public class RenderingBrowser extends Thread implements HtmlRenderer
 		imageLoader.data = new ImageData[] { image.getImageData() };
 		try
 		{
-			FileOutputStream fos = new FileOutputStream(saveDir + "/savedImage" + picnum + ".jpg");
-			imageLoader.save(fos, SWT.IMAGE_JPEG);
+			FileOutputStream fos = new FileOutputStream(saveDir + "/savedImage" + picnum + ".png");
+			imageLoader.save(fos, SWT.IMAGE_PNG);
 			fos.close();
 		}
 		catch (Exception e)
@@ -288,7 +288,7 @@ public class RenderingBrowser extends Thread implements HtmlRenderer
 					{
 
 						ImageLoader imageLoader = new ImageLoader();
-						File partialImageFile = new File(localSaveLocation, "savedImage" + i + ".jpg");
+						File partialImageFile = new File(localSaveLocation, "savedImage" + i + ".png");
 						FileInputStream fis = new FileInputStream(partialImageFile);
 						Image loadedImage = new Image(display, imageLoader.load(fis)[0]);
 						gc.drawImage(loadedImage, 0, i * (500 - scrollbarY));
@@ -303,7 +303,7 @@ public class RenderingBrowser extends Thread implements HtmlRenderer
 					imageSaver.data = new ImageData[] { result.getImageData() };
 					System.out.println("Saving image to location :" + saveLocation);
 					FileOutputStream fos = new FileOutputStream(saveLocation);
-					imageSaver.save(fos, SWT.IMAGE_JPEG);
+					imageSaver.save(fos, SWT.IMAGE_PNG);
 					fos.close();
 					result.dispose();
 
@@ -456,7 +456,7 @@ public class RenderingBrowser extends Thread implements HtmlRenderer
 		catch (Exception e)
 		{
 		}
-		System.out.println("browser shotdown...");
+		System.out.println("browser shutdown...");
 	}
 
 	/**
