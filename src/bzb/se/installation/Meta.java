@@ -144,7 +144,13 @@ public class Meta {
 		}
 	}
 	
+	private static int[] contentAmounts;
+	
 	public static void readContent () {
+		contentAmounts = new int[getAltitudeLevels().length];
+		contentLocations = new double[contentAmounts.length][][];
+		contentURLs = new String[contentAmounts.length][];
+		
 		try {
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
 					.newInstance();
@@ -155,18 +161,29 @@ public class Meta {
 			
 			NodeList markers = doc.getElementsByTagName("marker");
 			for (int s = 0; s < markers.getLength(); s++) {
-
 				Node firstNode = markers.item(s);
 				if (firstNode.getNodeType() == Node.ELEMENT_NODE) {
-
 					Element firstElement = (Element) firstNode;
-					if (firstElement.hasAttribute("markerSiteURL")) {
-						String mediaURL = firstElement.getAttribute(
-								"markerSiteURL").trim();
-						if (mediaURL.length() > 0) {
-							System.out.println("Media URL: " + mediaURL);
-						}
-					}
+					contentAmounts[Integer.parseInt(firstElement.getAttribute("markerElevation").trim())]++;
+				}
+			}
+			
+			for (int s = 0; s < contentAmounts.length; s++) {
+				contentLocations[s] = new double[contentAmounts[s]][3];
+				contentURLs[s] = new String[contentAmounts[s]];
+				contentAmounts[s] = 0;
+			}
+			
+			for (int s = 0; s < markers.getLength(); s++) {
+				Node firstNode = markers.item(s);
+				if (firstNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element firstElement = (Element) firstNode;
+					contentLocations[Integer.parseInt(firstElement.getAttribute("markerElevation").trim())]
+					                 [contentAmounts[Integer.parseInt(firstElement.getAttribute("markerElevation").trim())]]
+					                  = new double[]{Double.parseDouble(firstElement.getAttribute("markerLat")), Double.parseDouble(firstElement.getAttribute("markerLng"))};
+					contentURLs[Integer.parseInt(firstElement.getAttribute("markerElevation").trim())]
+					            [contentAmounts[Integer.parseInt(firstElement.getAttribute("markerElevation").trim())]++]
+					             = firstElement.getAttribute("markerRecord") + ".jpg";
 				}
 			}
 		} catch (SAXParseException err) {
