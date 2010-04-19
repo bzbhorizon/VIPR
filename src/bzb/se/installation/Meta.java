@@ -144,6 +144,51 @@ public class Meta {
 		}
 	}
 	
+	public static void readContent () {
+		try {
+			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(new File(Paths.DB_XML_FILE_URL));
+			// normalize text representation
+			doc.getDocumentElement().normalize();
+			
+			NodeList markers = doc.getElementsByTagName("marker");
+			for (int s = 0; s < markers.getLength(); s++) {
+
+				Node firstNode = markers.item(s);
+				if (firstNode.getNodeType() == Node.ELEMENT_NODE) {
+
+					Element firstElement = (Element) firstNode;
+					if (firstElement.hasAttribute("markerSiteURL")) {
+						String mediaURL = firstElement.getAttribute(
+								"markerSiteURL").trim();
+						if (mediaURL.length() > 0) {
+							System.out.println("Media URL: " + mediaURL);
+						}
+					}
+				}
+			}
+		} catch (SAXParseException err) {
+			System.out.println("** Parsing error" + ", line "
+					+ err.getLineNumber() + ", uri " + err.getSystemId());
+			System.out.println(" " + err.getMessage());
+		} catch (SAXException e) {
+			Exception x = e.getException();
+			((x == null) ? e : x).printStackTrace();
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}
+	
+	public static double[][] getContentLocations (int altLevel) {
+		return contentLocations[altLevel];
+	}
+	
+	public static String getContent (int altLevel, int number) {
+		return contentURLs[altLevel][number];
+	}
+	
 	public static boolean wanderRestricted () {
 		return wanderRestrict;
 	}

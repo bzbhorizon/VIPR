@@ -37,6 +37,7 @@ public class SubScreen implements Runnable {
 
 			new Thread(new Runnable() {
 				public void run() {
+					Meta.readContent();
 					explorer = Desktop.getDesktop();
 					resetContent();
 					try {
@@ -101,9 +102,9 @@ public class SubScreen implements Runnable {
 				int nearest = -1;
 				double distance = Double.MAX_VALUE;
 				double temp = 0;
-				for (int x = 0; x < contentLocations[alt].length; x++) {
-					temp = Math.pow(gx - contentLocations[alt][x][0], 2)
-							+ Math.pow(gy - contentLocations[alt][x][1], 2);
+				for (int x = 0; x < Meta.getContentLocations(alt).length; x++) {
+					temp = Math.pow(gx - Meta.getContentLocations(alt)[x][0], 2)
+							+ Math.pow(gy - Meta.getContentLocations(alt)[x][1], 2);
 					if (temp < distance) {
 						nearest = x;
 						distance = temp;
@@ -114,11 +115,11 @@ public class SubScreen implements Runnable {
 					try {
 						explorer
 								.browse(new URI(new File(Paths.RES_DIR
-										+ contentURLs[alt][nearest]).toURI()
+										+ Meta.getContent(alt, nearest)).toURI()
 										.toString()));
 						new ProcessBuilder("cmd", "/C",
 								"start", new File(Paths.RES_DIR
-										+ contentURLs[alt][nearest]).toURI()
+										+ Meta.getContent(alt, nearest)).toURI()
 										.toString());
 					} catch (Exception e) {
 						e.printStackTrace();
