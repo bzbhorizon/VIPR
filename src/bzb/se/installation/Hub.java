@@ -1,5 +1,7 @@
 package bzb.se.installation;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,19 +98,16 @@ public class Hub implements Runnable {
 				s = ss.accept();
 				s.setReceiveBufferSize(1000);
 				InputStream is = s.getInputStream();
-				int length = 0;
-				byte[] b;
-				String st;
-				while (length != -1) {
-					length = is.read();
-					if (length == -1) {
-						break;
-					}
-					b = new byte[length];
-					is.read(b);
-					st = new String(b);
-					new Thread(new ProcessThread(st)).start();
-				}
+				
+				BufferedInputStream bis = new BufferedInputStream(is);
+			    ByteArrayOutputStream buf = new ByteArrayOutputStream();
+			    int result = bis.read();
+			    while(result != -1) {
+			      byte b = (byte)result;
+			      buf.write(b);
+			      result = bis.read();
+			      new Thread(new ProcessThread(buf.toString())).start();
+			    }
 				
 				if (is != null) {
 					is.close();
@@ -144,6 +143,8 @@ public class Hub implements Runnable {
 
 	private long lastUpdated = 0;
 
+	private StringBuffer posData = new StringBuffer();
+	
 	private class ProcessThread implements Runnable {
 		
 		private String command;
@@ -205,14 +206,15 @@ public class Hub implements Runnable {
 			
 			} else if (System.currentTimeMillis() - lastUpdated > 1) {
 				try {
-					i = command.indexOf('.');
-					accelData[0] = Double.parseDouble(command.substring(0, i));
-					accelData[1] = Double.parseDouble(command.substring(i + 1, command.length()));
+					posData.append(command.trim());
+					System.out.println(posData.toString() + "***");
+					/*accelData[0] = Double.parseDouble(command.substring(0, i));
+					accelData[1] = Double.parseDouble(command.substring(i + 1, j));
 					updatePosition();
 					updateGoogleEarth(PAN_INSTANT);
-					lastUpdated = System.currentTimeMillis();
+					lastUpdated = System.currentTimeMillis();*/
 				} catch (Exception e) {
-					System.out.println("burp");
+					e.printStackTrace();
 				}
 			}
 		}
@@ -242,7 +244,6 @@ public class Hub implements Runnable {
 	}
 
 	public void updatePosition () {
-
 		try {
 			double dx = accelData[0] / 60;
 			double dy = accelData[1] / 60 * -1;
