@@ -100,13 +100,20 @@ public class Hub implements Runnable {
 				InputStream is = s.getInputStream();
 				
 				BufferedInputStream bis = new BufferedInputStream(is);
-			    ByteArrayOutputStream buf = new ByteArrayOutputStream();
+			    //ByteArrayOutputStream buf;
 			    int result = bis.read();
+			    StringBuffer sb = new StringBuffer();
 			    while(result != -1) {
-			      byte b = (byte)result;
-			      buf.write(b);
-			      result = bis.read();
-			      new Thread(new ProcessThread(buf.toString())).start();
+			    	//buf = new ByteArrayOutputStream();
+			    	byte b = (byte)result;
+			    	//buf.write(b);
+			    	if ((char)b == '/') {
+				    	new Thread(new ProcessThread(sb.toString())).start();
+				    	sb = new StringBuffer();
+			    	} else {
+			    		sb.append((char)b);
+			    	}
+			    	result = bis.read();
 			    }
 				
 				if (is != null) {
@@ -139,11 +146,8 @@ public class Hub implements Runnable {
 	}
 	
 	private double[] accelData = new double[2];
-	private int i = 0;
 
 	private long lastUpdated = 0;
-
-	private StringBuffer posData = new StringBuffer();
 	
 	private class ProcessThread implements Runnable {
 		
@@ -205,14 +209,13 @@ public class Hub implements Runnable {
 			} else if (command.startsWith("h")) {
 			
 			} else if (System.currentTimeMillis() - lastUpdated > 1) {
+				String[] bits = command.split(",");
 				try {
-					posData.append(command.trim());
-					System.out.println(posData.toString() + "***");
-					/*accelData[0] = Double.parseDouble(command.substring(0, i));
-					accelData[1] = Double.parseDouble(command.substring(i + 1, j));
+					accelData[0] = Double.parseDouble(bits[0]);
+					accelData[1] = Double.parseDouble(bits[1]);
 					updatePosition();
 					updateGoogleEarth(PAN_INSTANT);
-					lastUpdated = System.currentTimeMillis();*/
+					lastUpdated = System.currentTimeMillis();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -343,9 +346,13 @@ public class Hub implements Runnable {
 			} else if (ang >= 360) {
 				ang -= 360;
 			}
-			Dispatch.call(googleEarth,"SetCameraParams",new Variant(gy),new
+			try {
+				Dispatch.call(googleEarth,"SetCameraParams",new Variant(gy),new
 					   Variant(gx),new Variant(Meta.getAltitudeForLevel(alt)),new Variant(1),new
 					   Variant(300),new Variant(Meta.getHorizonAngle(alt)),new Variant(ang),new Variant(speed));
+			} catch (Exception e) {
+				System.out.println(gy + " " + gx + " " + Meta.getAltitudeForLevel(alt) + " " + Meta.getHorizonAngle(alt) + " " + ang + " " + speed);
+			}
 		}
 	}
 	
