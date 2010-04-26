@@ -18,34 +18,42 @@ public class Launcher {
 
 				if (args[0].equals("1")) {
 					if (args.length > 1) {
-						if (Meta.isMainScreen(ip, Integer.valueOf(args[1]))) {
+						if (Meta.isHub(ip, Integer.valueOf(args[1]))) {
 							new Thread(new Hub(Integer.valueOf(args[1]))).start();
 						} else {
-							System.out.println("blah");
+							System.out.println("Incorrect port specified: trying to start a hub on " + ip + " using default hub port " + Meta.PORT_HUB);
+							if (Meta.isHub(ip, Meta.PORT_HUB)) {
+								new Thread(new Hub()).start();
+							} else {
+								System.out.println("Trying to start a hub on " + ip + ":" + args[1] + " but no such hub declared in config file");
+							}
 						}
 					} else {
-						if (Meta.isMainScreen(ip, Meta.PORT_MAIN)) {
+						System.out.println("No port specified: trying to start a hub on " + ip + " using default hub port " + Meta.PORT_HUB);
+						if (Meta.isHub(ip, Meta.PORT_HUB)) {
 							new Thread(new Hub()).start();
 						} else {
-							System.out.println("blah");
+							System.out.println("Trying to start a hub on " + ip + ":" + Meta.PORT_HUB + " but no such hub declared in config file");
 						}
 					}
 				} else if (args[0].equals("2")) {
 					if (args.length > 1) {
-						if (Meta.isScreen(ip, Integer.valueOf(args[1]))) {
-							if (!Meta.isMainScreen(ip, Integer.valueOf(args[1]))) {
+						if (Meta.isInConfig(ip, Integer.valueOf(args[1]))) {
+							if (!Meta.isHub(ip, Integer.valueOf(args[1]))) {
 								new Thread(new SubScreen(Integer.valueOf(args[1]))).start();
 							} else {
+								System.out.println("This device is declared as a hub in the config file: trying to start a hub on " + ip + " using default hub port " + args[1]);
 								new Thread(new Hub(Integer.valueOf(args[1]))).start();
 							}
 						} else {
-							System.out.println("blah");
+							System.out.println("Trying to start a subscreen on " + ip + ":" + args[1] + " but no such subscreen (or hub) declared in config file");
 						}
 					} else {
-						if (Meta.isScreen(ip, Meta.PORT_SECONDARY)) {
+						System.out.println("No port specified: trying to start a subscreen on " + ip + " using default subscreen port " + Meta.PORT_SUB);
+						if (Meta.isInConfig(ip, Meta.PORT_SUB)) {
 							new Thread(new SubScreen()).start();
 						} else {
-							System.out.println("blah");
+							System.out.println("Trying to start a subscreen on " + ip + ":" + Meta.PORT_SUB + " but no such subscreen declared in config file");
 						}
 					}
 				}

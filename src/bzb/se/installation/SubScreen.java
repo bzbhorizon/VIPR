@@ -27,7 +27,7 @@ public class SubScreen implements Runnable {
 	private Desktop explorer;
 
 	public SubScreen () {
-		this(Meta.PORT_SECONDARY);
+		this(Meta.PORT_SUB);
 	}
 
 	public SubScreen(final int port) {

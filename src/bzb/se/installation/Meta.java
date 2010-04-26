@@ -17,22 +17,23 @@ import bzb.se.Paths;
 
 public class Meta {
 
-	public static final int PORT_MAIN = 50000;
-	public static final int PORT_SECONDARY = 49999;
+	public static final int PORT_HUB = 50000;
+	public static final int PORT_SUB = 49999;
 	
 	private static Document config;
 	private static String installationName;
 	private static int[] altitudeLevels;
-	private static String mainIp;
-	private static int mainPort;
-	private static ArrayList<ArrayList<String>> secondaryScreens = new ArrayList<ArrayList<String>>();
+	private static String hubIp;
+	private static int hubPort;
+	private static ArrayList<ArrayList<String>> subScreens = new ArrayList<ArrayList<String>>();
+	
 	private static double[] startPoint = new double[3];
 	private static boolean wanderRestrict = false;
 	private static double[][][] contentLocations; 
 	private static String[][] contentURLs;
 	
-	public static ArrayList<ArrayList<String>> getSecondaryScreens() {
-		return secondaryScreens;
+	public static ArrayList<ArrayList<String>> getSubScreens() {
+		return subScreens;
 	}
 	
 	public static int[] getAltitudeLevels() {
@@ -78,7 +79,7 @@ public class Meta {
 					String ip = firstElement.getAttribute("ip").trim();
 					if (ip.length() > 0) {
 						System.out.println("IP: " + ip);
-						mainIp = ip;
+						hubIp = ip;
 					} else {
 						System.out.println("No IP");
 					}
@@ -88,7 +89,7 @@ public class Meta {
 				if (firstElement.hasAttribute("port")) {
 					int port = Integer.parseInt(firstElement.getAttribute("port"));
 					System.out.println("Port: " + port);
-					mainPort = port;
+					hubPort = port;
 				} else {
 					System.out.println("No port");
 				}
@@ -128,7 +129,7 @@ public class Meta {
 						ArrayList<String> thisScreen = new ArrayList<String>();
 						thisScreen.add(firstElement.getAttribute("ip").trim());
 						thisScreen.add(firstElement.getAttribute("port").trim());
-						secondaryScreens.add(thisScreen);
+						subScreens.add(thisScreen);
 					}
 				}
 			}
@@ -253,16 +254,16 @@ public class Meta {
 		return scale;
 	}
 
-	public static boolean isMainScreen(String ip, int port) {
-		if (ip.equals(mainIp) && port == mainPort) {
+	public static boolean isHub(String ip, int port) {
+		if (ip.equals(hubIp) && port == hubPort) {
 			return true;
 		} else {
 			return false;
 		}
 	}
 	
-	public static boolean isSecondaryScreen(String ip, int port) {
-		for (ArrayList<String> thisScreen : secondaryScreens) {
+	public static boolean isSubScreen(String ip, int port) {
+		for (ArrayList<String> thisScreen : subScreens) {
 			if (thisScreen.get(0).equals(ip) && Integer.parseInt(thisScreen.get(1)) == port) {
 				return true;
 			}
@@ -270,8 +271,8 @@ public class Meta {
 		return false;
 	}
 
-	public static boolean isScreen(String targetIp, int targetPort) {
-		if(isMainScreen(targetIp, targetPort) || isSecondaryScreen(targetIp, targetPort)) {
+	public static boolean isInConfig(String targetIp, int targetPort) {
+		if(isHub(targetIp, targetPort) || isSubScreen(targetIp, targetPort)) {
 			return true;
 		} else {
 			return false;
