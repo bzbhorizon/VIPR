@@ -110,21 +110,21 @@ public class SubScreen implements Runnable {
 						distance = temp;
 					}
 				}
-				if (!Meta.wanderRestricted()
-						&& distance < Meta.getWanderLimitForLevel(alt)) {
+				/*if (!Meta.wanderRestricted()
+						&& distance < Meta.getWanderLimitForLevel(alt)) {*/
 					try {
 						explorer
-								.browse(new URI(new File(Paths.RES_DIR
+								.browse(new URI(new File(Paths.CONTENT_DIR
 										+ Meta.getContent(alt, nearest)).toURI()
 										.toString()));
 						new ProcessBuilder("cmd", "/C",
-								"start", new File(Paths.RES_DIR
+								"start", new File(Paths.CONTENT_DIR
 										+ Meta.getContent(alt, nearest)).toURI()
 										.toString());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-				}
+				//}
 
 			} catch (Exception e) {
 				System.out.println("burp");

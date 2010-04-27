@@ -22,7 +22,11 @@ public class Meta {
 	
 	private static Document config;
 	private static String installationName;
-	private static int[] altitudeLevels;
+	//private static int[] altitudeLevels;
+	private static int levels;
+	private static int maxAlt;
+	private static int minAlt;
+	private static double[] boundCoords = new double[4];
 	private static String hubIp;
 	private static int hubPort;
 	private static ArrayList<ArrayList<String>> subScreens = new ArrayList<ArrayList<String>>();
@@ -36,8 +40,12 @@ public class Meta {
 		return subScreens;
 	}
 	
-	public static int[] getAltitudeLevels() {
+	/*public static int[] getAltitudeLevels() {
 		return altitudeLevels;
+	}*/
+	
+	public static int getLevels() {
+		return levels;
 	}
 
 	public static String getInstallationName() {
@@ -58,7 +66,7 @@ public class Meta {
 			if (config.getDocumentElement().hasAttribute("name")) {
 				installationName = config.getDocumentElement().getAttribute("name");
 			}
-			NodeList levels = config.getElementsByTagName("level");
+			/*NodeList levels = config.getElementsByTagName("level");
 			altitudeLevels = new int[levels.getLength()];
 			for (int i = 0; i < levels.getLength(); i++) {
 				Node firstNode = levels.item(i);
@@ -68,7 +76,7 @@ public class Meta {
 						altitudeLevels[i] = Integer.parseInt(firstElement.getTextContent());
 					}
 				}
-			}
+			}*/
 			NodeList mainScreens = config.getElementsByTagName("main");
 			int total = mainScreens.getLength();
 			System.out.println("Total main screens: " + total);
@@ -102,6 +110,15 @@ public class Meta {
 				if (firstElement.hasAttribute("wanderRestrict")) {
 					wanderRestrict = Boolean.parseBoolean(firstElement.getAttribute("wanderRestrict").trim());
 				}
+				if (firstElement.hasAttribute("levels")) {
+					levels = Integer.parseInt(firstElement.getAttribute("levels").trim());
+				}
+				if (firstElement.hasAttribute("maxAlt")) {
+					maxAlt = Integer.parseInt(firstElement.getAttribute("maxAlt").trim());
+				}
+				if (firstElement.hasAttribute("minAlt")) {
+					minAlt = Integer.parseInt(firstElement.getAttribute("minAlt").trim());
+				}
 			}
 			
 			NodeList starts = config.getElementsByTagName("start");
@@ -116,6 +133,24 @@ public class Meta {
 				}
 				if (firstElement.hasAttribute("angle")) {
 					startPoint[2] = Double.parseDouble(firstElement.getAttribute("angle").trim());
+				}
+			}
+			
+			NodeList boundary = config.getElementsByTagName("boundary");
+			Node bound = boundary.item(0);
+			if (bound.getNodeType() == Node.ELEMENT_NODE) {
+				Element firstElement = (Element) bound;
+				if (firstElement.hasAttribute("xLeft")) {
+					boundCoords[BOUNDARY_LEFT] = Double.parseDouble(firstElement.getAttribute("xLeft").trim());
+				}
+				if (firstElement.hasAttribute("xRight")) {
+					boundCoords[BOUNDARY_RIGHT] = Double.parseDouble(firstElement.getAttribute("xRight").trim());
+				}
+				if (firstElement.hasAttribute("yTop")) {
+					boundCoords[BOUNDARY_TOP] = Double.parseDouble(firstElement.getAttribute("yTop").trim());
+				}
+				if (firstElement.hasAttribute("yBottom")) {
+					boundCoords[BOUNDARY_BOTTOM] = Double.parseDouble(firstElement.getAttribute("yBottom").trim());
 				}
 			}
 			
@@ -148,7 +183,7 @@ public class Meta {
 	private static int[] contentAmounts;
 	
 	public static void readContent () {
-		contentAmounts = new int[getAltitudeLevels().length];
+		contentAmounts = new int[getLevels()];
 		contentLocations = new double[contentAmounts.length][][];
 		contentURLs = new String[contentAmounts.length][];
 		
@@ -184,7 +219,7 @@ public class Meta {
 					                  = new double[]{Double.parseDouble(firstElement.getAttribute("markerLat")), Double.parseDouble(firstElement.getAttribute("markerLng"))};
 					contentURLs[Integer.parseInt(firstElement.getAttribute("markerElevation").trim())]
 					            [contentAmounts[Integer.parseInt(firstElement.getAttribute("markerElevation").trim())]++]
-					             = firstElement.getAttribute("markerRecord") + ".jpg";
+					             = firstElement.getAttribute("markerRecord") + ".html";
 				}
 			}
 		} catch (SAXParseException err) {
@@ -212,15 +247,20 @@ public class Meta {
 	}
 	
 	public static int getAltitudeForLevel (int level) {
-		return altitudeLevels[level];
+		double dif = maxAlt - minAlt;
+		int alt = maxAlt - (int)(dif / levels * level);
+		//System.out.println("alt " + alt);
+		return alt;
 	}
 	
 	public static double[] getStart () {
 		return startPoint;
 	}
 	
-	public static int getHorizonAngle (int altLevel) {
-		return 90 - (int) Math.ceil(70.0 / (altLevel + 1));
+	public static int getHorizonAngle (int level) {
+		int angle = 20 + (int)(70.0 * Math.pow(level, 2) / Math.pow(levels, 2));
+		//System.out.println("angle " + angle);
+		return angle;
 	}
 	
 	public static final int BOUNDARY_TOP = 0;
@@ -228,7 +268,11 @@ public class Meta {
 	public static final int BOUNDARY_BOTTOM = 2;
 	public static final int BOUNDARY_LEFT = 3;
 	
-	public static double getBoundary (int side, int altLevel) {
+	public static double getBoundary (int side) {
+		return boundCoords[side]; 
+	}
+	
+	/*public static double getBoundary (int side, int altLevel) {
 		switch (side) {
 		case BOUNDARY_TOP:
 			return getStart()[1] + getWanderLimitForLevel(altLevel); 
@@ -241,12 +285,12 @@ public class Meta {
 		default:
 			return 0;
 		}
-	}
+	}*/
 	
 	// to do
-	public static double getWanderLimitForLevel (int altLevel) {
+	/*public static double getWanderLimitForLevel (int altLevel) {
 		return (double)altLevel;
-	}
+	}*/
 	
 	public static int getIconScaleForLevel (int level) {
 		int altitude = getAltitudeForLevel(level);

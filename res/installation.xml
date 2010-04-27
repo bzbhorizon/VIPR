@@ -1,18 +1,12 @@
 <installation name="Rivers">
 	<components>
 		<main ip="192.168.1.69" port="50000">
-			<googleEarth wanderRestrict="false">
-				<start y="29.8019" x="121.559" />
-				<altitude>
-					<level number="0">2000000</level>
-					<level number="1">1000000</level>
-					<level number="2">200000</level>
-					<level number="3">90000</level>
-					<level number="4">1500</level>
-					<level number="5">500</level>
-				</altitude>
+			<googleEarth wanderRestrict="false" levels="6" maxAlt="2000000" minAlt="1000">
+				<start y="29.8019" x="121.559" angle="0" />
+				<boundary xLeft="66.0" xRight="126.0" yTop="58.0" yBottom="18.0" />
 			</googleEarth>
 		</main>
 		<secondary ip="192.168.1.69" port="49999" />
+		<secondary ip="192.168.1.69" port="49998" />
 	</components>
 </installation>

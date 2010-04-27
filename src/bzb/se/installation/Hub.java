@@ -275,12 +275,10 @@ public class Hub implements Runnable {
 				dy = delay * SPEED_BASE * Meta.getAltitudeForLevel(alt)
 						/ Meta.getAltitudeForLevel(0) * dy;
 
-				if ((gx + dx) > Meta.getBoundary(Meta.BOUNDARY_LEFT, alt)
-						&& (gx + dx) < Meta.getBoundary(Meta.BOUNDARY_RIGHT,
-								alt)
-						&& (gy + dy) < Meta.getBoundary(Meta.BOUNDARY_TOP, alt)
-						&& (gy + dy) > Meta.getBoundary(Meta.BOUNDARY_BOTTOM,
-								alt)) {
+				if ((gx + dx) > Meta.getBoundary(Meta.BOUNDARY_LEFT)
+						&& (gx + dx) < Meta.getBoundary(Meta.BOUNDARY_RIGHT)
+						&& (gy + dy) < Meta.getBoundary(Meta.BOUNDARY_TOP)
+						&& (gy + dy) > Meta.getBoundary(Meta.BOUNDARY_BOTTOM)) {
 					gx += dx;
 					if (gx > 180) {
 						gx -= 360;
@@ -312,12 +310,12 @@ public class Hub implements Runnable {
 	}
 
 	public void zoomIn() {
-		if (alt < Meta.getAltitudeLevels().length - 1) {
+		if (alt < Meta.getLevels()) {
 			alt++;
-			if (!(gx > Meta.getBoundary(Meta.BOUNDARY_LEFT, alt)
-					&& gx < Meta.getBoundary(Meta.BOUNDARY_RIGHT, alt)
-					&& gy < Meta.getBoundary(Meta.BOUNDARY_TOP, alt) && gy > Meta
-					.getBoundary(Meta.BOUNDARY_BOTTOM, alt))) {
+			if (!(gx > Meta.getBoundary(Meta.BOUNDARY_LEFT)
+					&& gx < Meta.getBoundary(Meta.BOUNDARY_RIGHT)
+					&& gy < Meta.getBoundary(Meta.BOUNDARY_TOP) && gy > Meta
+					.getBoundary(Meta.BOUNDARY_BOTTOM))) {
 				gy = Meta.getStart()[1];
 				gx = Meta.getStart()[0];
 			}
@@ -328,10 +326,10 @@ public class Hub implements Runnable {
 	public void zoomOut() {
 		if (alt > 0) {
 			alt--;
-			if (!(gx > Meta.getBoundary(Meta.BOUNDARY_LEFT, alt)
-					&& gx < Meta.getBoundary(Meta.BOUNDARY_RIGHT, alt)
-					&& gy < Meta.getBoundary(Meta.BOUNDARY_TOP, alt) && gy > Meta
-					.getBoundary(Meta.BOUNDARY_BOTTOM, alt))) {
+			if (!(gx > Meta.getBoundary(Meta.BOUNDARY_LEFT)
+					&& gx < Meta.getBoundary(Meta.BOUNDARY_RIGHT)
+					&& gy < Meta.getBoundary(Meta.BOUNDARY_TOP) && gy > Meta
+					.getBoundary(Meta.BOUNDARY_BOTTOM))) {
 				gy = Meta.getStart()[1];
 				gx = Meta.getStart()[0];
 			}
