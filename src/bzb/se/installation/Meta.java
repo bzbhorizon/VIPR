@@ -220,7 +220,7 @@ public class Meta {
 	}
 	
 	public static int getHorizonAngle (int altLevel) {
-		return (int) Math.ceil(90.0 / (altLevel + 1));
+		return 90 - (int) Math.ceil(70.0 / (altLevel + 1));
 	}
 	
 	public static final int BOUNDARY_TOP = 0;

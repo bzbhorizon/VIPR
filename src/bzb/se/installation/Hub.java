@@ -23,14 +23,14 @@ public class Hub implements Runnable {
 
 	public boolean run;
 
-	private Dispatch googleEarth;
+	private Dispatch googleEarth; 
 
 	private double gy = Meta.getStart()[1]; // 180 -> -180
 	private double gx = Meta.getStart()[0]; // 90 -> -90
 	private int alt = 0;
 	private double ang = Meta.getStart()[2];
 
-	private static final double PAN_INSTANT = 5;
+	private static final double PAN_INSTANT = 5.0;
 	private static final double PAN_SLOW = 0.75;
 	private static final double SPEED_BASE = 0.0025;
 
@@ -50,7 +50,7 @@ public class Hub implements Runnable {
 					Dispatch.call(googleEarth, "OpenKmlFile",
 							new Variant(new File(Paths.ICONS_OVERLAY_URL)
 									.getAbsolutePath()), new Variant(true));
-
+					
 					resetGoogleEarth();
 					try {
 						System.out
@@ -181,7 +181,11 @@ public class Hub implements Runnable {
 					rotateRight();
 				}
 			} else if (command.startsWith("h")) {
-
+				if (command.equals("h0")) {
+					System.out.println("Moving");
+				} else if (command.equals("h1")) {
+					System.out.println("Holding");
+				}
 			} else if (System.currentTimeMillis() - lastUpdated > 1) {
 				String[] bits = command.split(",");
 				try {
@@ -235,8 +239,8 @@ public class Hub implements Runnable {
 
 	public void updatePosition() {
 		try {
-			double dx = accelData[0] / 60;
-			double dy = accelData[1] / 60 * -1;
+			double dx = accelData[0] / 60 * -1;
+			double dy = accelData[1] / 60;
 			double dz = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 			double dang = getAngle(dx, dy);
 
@@ -336,25 +340,24 @@ public class Hub implements Runnable {
 	}
 
 	public void updateGoogleEarth(double speed) {
-		if (googleEarth != null) {
-			if (ang < 0) {
-				ang += 360;
-			} else if (ang >= 360) {
-				ang -= 360;
-			}
-			try {
-				Dispatch.call(googleEarth, "SetCameraParams", new Variant(gy),
-						new Variant(gx), new Variant(Meta
-								.getAltitudeForLevel(alt)), new Variant(1),
-						new Variant(300),
-						new Variant(Meta.getHorizonAngle(alt)),
-						new Variant(ang), new Variant(speed));
-			} catch (Exception e) {
-				System.out.println(e.getMessage() + " " + gy + " " + gx + " "
-						+ Meta.getAltitudeForLevel(alt) + " "
-						+ Meta.getHorizonAngle(alt) + " " + ang + " " + speed);
-			}
+		if (ang < 0) {
+			ang += 360;
+		} else if (ang >= 360) {
+			ang -= 360;
 		}
+		try {
+			googleEarth = new Dispatch("GoogleEarth.ApplicationGE");
+			Dispatch.call(googleEarth, "SetCameraParams", new Variant(gy),
+					new Variant(gx), new Variant(Meta
+							.getAltitudeForLevel(alt)), new Variant(1),
+					new Variant(300),
+					new Variant(Meta.getHorizonAngle(alt)),
+					new Variant(ang), new Variant(speed));
+		} catch (Exception e) {
+			System.out.println(e.getMessage() + " " + gy + " " + gx + " "
+					+ Meta.getAltitudeForLevel(alt) + " "
+					+ Meta.getHorizonAngle(alt) + " " + ang + " " + speed);
+		} 	
 	}
 
 	public void resetGoogleEarth() {

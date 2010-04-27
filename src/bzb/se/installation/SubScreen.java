@@ -161,7 +161,7 @@ public class SubScreen implements Runnable {
 
 		public void run() {
 			while (true) {
-				String audioFile = Paths.AUDIO_DIR + (alt+1) + ".mp3";
+				String audioFile = Paths.AUDIO_DIR + alt + ".mp3";
 				System.out.println("Starting " + audioFile);
 				try {
 					FileInputStream fis = new FileInputStream(audioFile);

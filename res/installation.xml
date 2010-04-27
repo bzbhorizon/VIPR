@@ -2,9 +2,9 @@
 	<components>
 		<main ip="192.168.1.69" port="50000">
 			<googleEarth wanderRestrict="false">
-				<start y="33.314729" x="44.422256" angle="1" />
+				<start y="29.8019" x="121.559" />
 				<altitude>
-					<level number="0">5000000</level>
+					<level number="0">2000000</level>
 					<level number="1">1000000</level>
 					<level number="2">200000</level>
 					<level number="3">90000</level>
